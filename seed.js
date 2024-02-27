@@ -13,12 +13,15 @@ async function seedDatabase() {
         const apiData = Data; 
         await Flight.insertMany(apiData);
         console.log('Data inserted successfully');
+        
+        await mongoose.disconnect();
+        console.log('Disconnected from MongoDB');
     } else {
-        console.log('Data already exists in the Flight collection. Skipping insertion.');
+        console.log('Data already exists in the Flight collection.');
     }
         } catch (error) {
             console.error('Error seeding database:', error);
-    }
+    } 
 }
 
 seedDatabase();
