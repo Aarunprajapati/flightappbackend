@@ -9,8 +9,5 @@ routes.post('/register', userController.register)
 routes.post('/login', userController.login);
 
 
-//pravite routes
 
-
-
-export default routes;
+export default routes;      
