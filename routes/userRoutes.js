@@ -8,8 +8,8 @@ const routes = express.Router();
 // public routes
 routes.post('/register', userController.register)
 routes.post('/login', userController.login);
-routes.get('/tocity', flightController.cityAirportsTo)
-routes.get('/fromcity', flightController.cityAirportsFrom)
-
+routes.get('/displaydata', flightController.displayData)
+routes.get('/sourcecity', flightController.sourceData)
+routes.get('/destinationcity', flightController.destinationData)
 
 export default routes;      
