@@ -1,15 +1,12 @@
 import Flight from "../models/flightModel.js"
 
 const flightController = {
+   
    async displayData(req, res) {
       try {
           const flights = await Flight.find();
-  
-          // Initialize sets to store unique city names for source and destination
           const sourceCitiesSet = new Set();
           const destinationCitiesSet = new Set();
-  
-          // Initialize arrays to store unique source and destination airports
             const uniqueSourceAirports = [];
             const uniqueDestinationAirports = [];
    
@@ -32,8 +29,7 @@ const flightController = {
          } catch (error) {
             res.status(500).json({ error: "Internal server error" });
          }
-   },
-  
+   }, 
     async sourceData(req, res) {
       try {
           const flights = await Flight.find();
@@ -64,7 +60,14 @@ const flightController = {
           res.status(500).json({ error: "Internal server error" });
       }
   },
-  
+  async allFlightData(req, res) {
+    try {
+        const flight = await Flight.find();
+        await res.json({flight})
+    } catch (error) {
+        res.status(500).json({error:"something went wrong"})
+    }
+},
   
 }
 export default flightController
