@@ -1,15 +1,12 @@
 import Flight from "../models/flightModel.js"
 
 const flightController = {
+   
    async displayData(req, res) {
       try {
           const flights = await Flight.find();
-  
-          // Initialize sets to store unique city names for source and destination
           const sourceCitiesSet = new Set();
           const destinationCitiesSet = new Set();
-  
-          // Initialize arrays to store unique source and destination airports
             const uniqueSourceAirports = [];
             const uniqueDestinationAirports = [];
    
@@ -32,8 +29,7 @@ const flightController = {
          } catch (error) {
             res.status(500).json({ error: "Internal server error" });
          }
-   },
-  
+   }, 
     async sourceData(req, res) {
       try {
           const flights = await Flight.find();
@@ -64,7 +60,35 @@ const flightController = {
           res.status(500).json({ error: "Internal server error" });
       }
   },
-  
+  async allFlightData(req, res) {
+    try {
+        const flights = await Flight.find()
+        await res.json({flights})
+    } catch (error) {
+        res.status(500).json({error:"something went wrong"})
+    }
+},
+async stopfilter(req, res) {
+    try {
+      
+        const { stops } = req.query; 
+
+        let filter = {};
+        if (stops === 'Non stop') {
+            filter['displayData.stopInfo'] = 'Non stop';
+        } else if (stops === '1 stop') {
+            filter['displayData.stopInfo'] = '1 stop';
+        } else if (stops === '2 stop') {
+            filter['displayData.stopInfo'] = '2 stop';
+        }
+
+        const flights = await Flight.find(filter).select("displayData");
+        res.status(200).json({flights});
+    } catch (error) {
+        res.status(500).json({error: "something went wrong"});
+    }
+}
+
   
 }
 export default flightController
