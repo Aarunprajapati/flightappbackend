@@ -12,4 +12,5 @@ routes.get('/displaydata', flightController.displayData)
 routes.get('/sourcecity', flightController.sourceData)
 routes.get('/destinationcity', flightController.destinationData)
 routes.get("/allflight", flightController.allFlightData)
+routes.get("/stopflights", flightController.stopfilter)
 export default routes;      

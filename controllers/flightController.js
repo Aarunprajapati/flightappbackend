@@ -62,12 +62,33 @@ const flightController = {
   },
   async allFlightData(req, res) {
     try {
-        const flight = await Flight.find();
-        await res.json({flight})
+        const flights = await Flight.find()
+        await res.json({flights})
     } catch (error) {
         res.status(500).json({error:"something went wrong"})
     }
 },
+async stopfilter(req, res) {
+    try {
+      
+        const { stops } = req.query; 
+
+        let filter = {};
+        if (stops === 'Non stop') {
+            filter['displayData.stopInfo'] = 'Non stop';
+        } else if (stops === '1 stop') {
+            filter['displayData.stopInfo'] = '1 stop';
+        } else if (stops === '2 stop') {
+            filter['displayData.stopInfo'] = '2 stop';
+        }
+
+        const flights = await Flight.find(filter).select("displayData");
+        res.status(200).json({flights});
+    } catch (error) {
+        res.status(500).json({error: "something went wrong"});
+    }
+}
+
   
 }
 export default flightController
