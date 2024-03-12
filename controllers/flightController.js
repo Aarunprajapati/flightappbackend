@@ -63,8 +63,8 @@ const flightController = {
   
   async allFlightData(req, res) {
     try {
-        const flights = await Flight.find()
-        await res.json({flights})
+        const flight = await Flight.find()
+        await res.json({flight})
     } catch (error) {
         res.status(500).json({error:"something went wrong"})
     }
@@ -88,7 +88,10 @@ async stopfilter(req, res) {
     } catch (error) {
         res.status(500).json({error: "something went wrong"});
     }
-}
+},
+
+
+
 
   
 }
