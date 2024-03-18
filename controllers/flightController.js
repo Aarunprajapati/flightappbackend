@@ -72,9 +72,9 @@ const flightController = {
 },
 async matchingData(req, res) {
     try {
-        const { location, locationR, stopInfo, depTime } = req.query;
+        const { location, locationR, stopInfo, depTime, price } = req.query;
 
-        if (!(location && locationR)) {
+        if (!(location && locationR )) {
             return res.status(400).json({ error: "Please provide all the required details" });
         }
 
@@ -86,16 +86,14 @@ async matchingData(req, res) {
         if (stopInfo) {
             query["displayData.stopInfo"] = stopInfo;
         }
+        if (price) {
+            query["fare"] = { $lte: price };
+        }
 
-        // Assuming depTime is passed as 'morning' or 'evening'
-            // This part needs adjustment or an alternative approach
-            // MongoDB does not support direct time string comparison in this way for date fields
-      
-
-        const flights = await Flight.find(query);
-
-        // Filtering based on depTime, if specified, needs to be done in memory
-        // This is not efficient for large datasets
+        let flights = await Flight.find(query);
+        if (flights.length === 0 && price) {
+            delete query["fare"]; 
+        }
         let filteredFlights = flights;
         if (depTime) {
             const isMorning = depTime.toLowerCase() === "morning";
@@ -104,7 +102,6 @@ async matchingData(req, res) {
                 return isMorning ? hour < 12 : hour >= 12;
             });
         }
-
         if (filteredFlights.length > 0) {
             return res.status(200).json( filteredFlights);
 
@@ -116,9 +113,23 @@ async matchingData(req, res) {
         return res.status(500).json({ error: "Internal Server Error" });
     }
 },
-
-
-
+async searchData(req, res) {
+    try {
+        let data = await Flight.find(
+            {
+                "$or":[
+                    {
+                        "displayData.source.airport.cityName":{$regex:req.params.search}
+                    },
+                ]
+            }
+        );
+        res.status(200).json(data)
+    } catch (error) {
+        console.error(error)
+    }
+    
+}
 
   
 }
