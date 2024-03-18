@@ -29,64 +29,104 @@ const flightController = {
          } catch (error) {
             res.status(500).json({ error: "Internal server error" });
          }
-   }, 
-    async sourceData(req, res) {
-      try {
-          const flights = await Flight.find();
-          const sourceCitiesSet = new Set(); 
-          flights.forEach(flight => {
-              sourceCitiesSet.add(flight.displayData.source.airport.cityName);
-          });
-  
-          const sourceAirports = Array.from(sourceCitiesSet);
-  
-          await res.json({ sourceAirports });
-      } catch (error) {
-          res.status(500).json({ error: "Internal server error" });
-      }
+  }, 
+
+  async sourceData(req, res) {
+    try {
+        const flights = await Flight.find();
+        const sourceCitiesSet = new Set(); 
+        flights.forEach(flight => {
+            sourceCitiesSet.add(flight.displayData.source.airport.cityName);
+        });
+
+        const sourceAirports = Array.from(sourceCitiesSet);
+
+        await res.json({ sourceAirports });
+    } catch (error) {
+        res.status(500).json({ error: "Internal server error" });
+    }
   },
+
     async destinationData(req, res) {
       try {
           const flights = await Flight.find();
           const sourceCitiesSet1 = new Set(); 
           flights.forEach(flight => {
-              sourceCitiesSet1.add(flight.displayData.destination.airport.cityName);
+            sourceCitiesSet1.add(flight.displayData.destination.airport.cityName);
           });
-  
           const sourceAirports1 = Array.from(sourceCitiesSet1);
-  
           await res.json({ sourceAirports1 });
       } catch (error) {
           res.status(500).json({ error: "Internal server error" });
       }
   },
+  
   async allFlightData(req, res) {
-    try {
-        const flights = await Flight.find()
-        await res.json({flights})
+    try {   
+        const flight = await Flight.find()
+        await res.json({flight})
     } catch (error) {
         res.status(500).json({error:"something went wrong"})
     }
 },
-async stopfilter(req, res) {
+async matchingData(req, res) {
     try {
-      
-        const { stops } = req.query; 
+        const { location, locationR, stopInfo, depTime, price } = req.query;
 
-        let filter = {};
-        if (stops === 'Non stop') {
-            filter['displayData.stopInfo'] = 'Non stop';
-        } else if (stops === '1 stop') {
-            filter['displayData.stopInfo'] = '1 stop';
-        } else if (stops === '2 stop') {
-            filter['displayData.stopInfo'] = '2 stop';
+        if (!(location && locationR )) {
+            return res.status(400).json({ error: "Please provide all the required details" });
         }
 
-        const flights = await Flight.find(filter).select("displayData");
-        res.status(200).json({flights});
+        let query = {
+            "displayData.source.airport.cityName": location,
+            "displayData.destination.airport.cityName": locationR,
+        };
+
+        if (stopInfo) {
+            query["displayData.stopInfo"] = stopInfo;
+        }
+        if (price) {
+            query["fare"] = { $lte: price };
+        }
+
+        let flights = await Flight.find(query);
+        if (flights.length === 0 && price) {
+            delete query["fare"]; 
+        }
+        let filteredFlights = flights;
+        if (depTime) {
+            const isMorning = depTime.toLowerCase() === "morning";
+            filteredFlights = flights.filter(flight => {
+                const hour = new Date(flight.displayData.source.depTime).getHours();
+                return isMorning ? hour < 12 : hour >= 12;
+            });
+        }
+        if (filteredFlights.length > 0) {
+            return res.status(200).json(filteredFlights);
+        } else {
+            return res.status(404).json({ error: "No matching flights found" });
+        }
     } catch (error) {
-        res.status(500).json({error: "something went wrong"});
+        console.error(error);
+        return res.status(500).json({ error: "Internal Server Error" });
     }
+},
+async searchData(req, res) {
+    try {
+        let data = await Flight.find(
+            {
+                "$or":[
+                    {
+                        "displayData.source.airport.cityName":{$regex:req.params.search}
+                    },
+                ]
+            }
+        );
+        res.status(200).json(data)
+    } catch (error) {
+        console.error(error)
+    }
+    
 }
 
   
