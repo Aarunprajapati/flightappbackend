@@ -68,6 +68,7 @@ const flightController = {
     } catch (error) {
         res.status(500).json({error:"something went wrong"})
     }
+
 },
 async matchingData(req, res) {
     try {
@@ -87,10 +88,9 @@ async matchingData(req, res) {
         }
 
         // Assuming depTime is passed as 'morning' or 'evening'
-        if (depTime) {
             // This part needs adjustment or an alternative approach
             // MongoDB does not support direct time string comparison in this way for date fields
-        }
+      
 
         const flights = await Flight.find(query);
 
@@ -106,7 +106,8 @@ async matchingData(req, res) {
         }
 
         if (filteredFlights.length > 0) {
-            return res.status(200).json(filteredFlights);
+            return res.status(200).json( filteredFlights);
+
         } else {
             return res.status(404).json({ error: "No matching flights found" });
         }
