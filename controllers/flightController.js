@@ -68,6 +68,7 @@ const flightController = {
     } catch (error) {
         res.status(500).json({error:"something went wrong"})
     }
+
 },
 async matchingData(req, res) {
     try {
@@ -102,7 +103,8 @@ async matchingData(req, res) {
             });
         }
         if (filteredFlights.length > 0) {
-            return res.status(200).json(filteredFlights);
+            return res.status(200).json( filteredFlights);
+
         } else {
             return res.status(404).json({ error: "No matching flights found" });
         }
@@ -113,15 +115,7 @@ async matchingData(req, res) {
 },
 async searchData(req, res) {
     try {
-        let data = await Flight.find(
-            {
-                "$or":[
-                    {
-                        "displayData.source.airport.cityName":{$regex:req.params.search}
-                    },
-                ]
-            }
-        );
+        let data = await Flight.find(req.query);
         res.status(200).json(data)
     } catch (error) {
         console.error(error)

@@ -13,6 +13,6 @@ routes.get('/sourcecity', flightController.sourceData)
 routes.get('/destinationcity', flightController.destinationData)
 routes.get("/allflight", flightController.allFlightData)
 routes.get("/matchingData", flightController.matchingData)
-routes.get("/searchData/:search", flightController.searchData)
+routes.get("/searchData", flightController.searchData)
 
 export default routes;      
