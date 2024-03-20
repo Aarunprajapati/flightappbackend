@@ -78,20 +78,22 @@ async matchingData(req, res) {
         }
 
         let query = {
-            "displayData.source.airport.cityName": location,
-            "displayData.destination.airport.cityName": locationR,
+            "displayData.source.airport.cityName": {$regex: location, $options: "i"},
+            "displayData.destination.airport.cityName": {$regex: locationR, $options: "i"},
         };
 
         if (stopInfo) {
-            query["displayData.stopInfo"] = stopInfo;
+            query["displayData.stopInfo"] = {$regex: stopInfo, $options: "i"};
         }
         if (price) {
-            query["fare"] = { $lte: price };
+            query.fare = { $lte: price };
         }
+        
 
         let flights = await Flight.find(query);
         if (flights.length === 0 && price) {
             delete query["fare"]; 
+            flights = await Flight.find(query);
         }
         let filteredFlights = flights;
         if (depTime) {
@@ -128,7 +130,5 @@ async searchData(req, res) {
     }
     
 }
-
-  
 }
 export default flightController
