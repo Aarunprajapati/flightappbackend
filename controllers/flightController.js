@@ -115,15 +115,7 @@ async matchingData(req, res) {
 },
 async searchData(req, res) {
     try {
-        let data = await Flight.find(
-            {
-                "$or":[
-                    {
-                        "displayData.source.airport.cityName":{$regex:req.params.search}
-                    },
-                ]
-            }
-        );
+        let data = await Flight.find(req.query);
         res.status(200).json(data)
     } catch (error) {
         console.error(error)
