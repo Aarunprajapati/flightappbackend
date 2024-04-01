@@ -35,6 +35,7 @@ const userController = {
       const options = {
         httpOnly: true,
         secure: true,
+        sameSite: 'None',
       };
       const accessToken = await user.generateAccessToken();
       res
