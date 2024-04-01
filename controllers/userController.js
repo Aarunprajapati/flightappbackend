@@ -1,11 +1,12 @@
+
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import userModel from "../models/userModel.js";
+import { ApiError } from "../utils/ApiErrors.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 
 const generateFreshAccessToken = async function (userId) {
-  console.log(userId);
   const user = await userModel.findById(userId);
-  console.log(user);
   const accessToken = await user.generateAccessToken();
   return { accessToken };
 };
@@ -33,16 +34,16 @@ const userController = {
 
       const options = {
         httpOnly: true,
+        path: "/",
         secure: true,
       };
       const accessToken = await user.generateAccessToken();
       res
         .status(200)
         .cookie("accessToken", accessToken, options)
-        .json({ success: "User registered successfully" });
+        .json(new ApiResponse(200, { success: "Register Successfully" }));
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Internal server error" });
+      new ApiError(500, error.message || "Internal Server Error");
     }
   },
   async login(req, res) {
@@ -64,19 +65,40 @@ const userController = {
 
         const options = {
           httpOnly: true,
+          path: "/",
           secure: true,
         };
 
         const { accessToken } = await generateFreshAccessToken(user._id);
 
-        res.status(200).cookie("accessToken", accessToken, options).json({success:"login Successfully "});
+        res
+          .status(200)
+          .cookie("accessToken", accessToken, options)
+          .json(
+            new ApiResponse(200, {
+              success: "User login successfully",
+              accessToken,
+            }),
+          );
       }
     } catch (error) {
-      res.status(500).json({ error: "Internal server error" });
+      throw new ApiError(500, "Internal Server Error");
     }
   },
   async loggeduser(req, res) {
     res.send({ user: req.user });
+  },
+  async logOut(req, res) {
+    const user= await userModel.findByIdAndUpdate(req.user._id);
+    const options ={
+      httpOnly:true,
+      secure:true
+    }
+    res.status(200)
+    .clearCookie("accessToken", options)
+    .json(
+      new ApiResponse(200, {}, "user logged out successfully")
+    )
   },
 };
 
