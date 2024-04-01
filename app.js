@@ -1,22 +1,27 @@
-import dotenv from 'dotenv'
-dotenv.config()
-import express from 'express';
-import userRoutes from './routes/userRoutes.js'
-import cors from 'cors';
-import connectDB from './config/connectDB.js';
-import cookieParser from 'cookie-parser';
+import dotenv from "dotenv";
+dotenv.config();
+import express from "express";
+import cookieParser from "cookie-parser";
+import userRoutes from "./routes/userRoutes.js";
+import cors from "cors";
+import connectDB from "./config/connectDB.js";
 
 const app = express();
 const PORT = process.env.PORT || 8000;
-const DATABASEURL = process.env.DATABASE_URL 
-connectDB(DATABASEURL)
+const DATABASEURL = process.env.DATABASE_URL;
+connectDB(DATABASEURL);
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true,
+  }),
+);
+app.use(express.urlencoded({ limit: "16kb" }));
+app.use(cookieParser());
+app.use(express.json({ limit: "16kb" }));
 
-app.use(cookieParser())
-app.use(cors());
-app.use(express.json())
-app.use('/api/user', userRoutes)
+app.use("/api/user", userRoutes);
 
-
-app.listen(PORT , ()=>{
-    console.log(`Server is running on port ${PORT}`);
-})
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});

@@ -1,6 +1,7 @@
 import express from 'express';
 import userController from "../controllers/userController.js";
 import flightController from '../controllers/flightController.js';
+import { VerifyJwt } from '../middleware/auth.middleware.js';
 import bookingController from '../controllers/bookingController.js';
 const routes = express.Router();
 
@@ -9,6 +10,11 @@ const routes = express.Router();
 // public routes
 routes.post('/register', userController.register)
 routes.post('/login', userController.login);
+
+//Secured routes
+routes.post("/logout", VerifyJwt ,userController.logOut)
+
+// flights routes
 routes.get('/displaydata', flightController.displayData)
 routes.get('/sourcecity', flightController.sourceData)
 routes.get('/destinationcity', flightController.destinationData)
