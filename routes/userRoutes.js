@@ -1,6 +1,7 @@
 import express from 'express';
 import userController from "../controllers/userController.js";
 import flightController from '../controllers/flightController.js';
+import bookingController from '../controllers/bookingController.js';
 const routes = express.Router();
 
 
@@ -14,5 +15,5 @@ routes.get('/destinationcity', flightController.destinationData)
 routes.get("/allflight", flightController.allFlightData)
 routes.get("/matchingData", flightController.matchingData)
 routes.get("/searchData", flightController.searchData)
-
+routes.post('/booking', bookingController.registerBooking)
 export default routes;      
