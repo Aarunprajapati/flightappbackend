@@ -12,8 +12,9 @@ const DATABASEURL = process.env.DATABASE_URL;
 connectDB(DATABASEURL);
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: "http://localhost:3000",
     credentials: true,
+    preflightContinue: true,
   }),
 );
 app.use(express.urlencoded({ limit: "16kb" }));
