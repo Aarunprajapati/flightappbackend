@@ -36,6 +36,7 @@ const userController = {
         httpOnly: true,
         path: "/",
         secure: true,
+        sameSite: 'None',
       };
       const accessToken = await user.generateAccessToken();
       res
