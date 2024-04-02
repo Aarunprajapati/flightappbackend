@@ -67,13 +67,15 @@ const userController = {
           httpOnly: true,
           path: "/",
           secure: true,
+          sameSite:"none"
+         
         };
 
         const { accessToken } = await generateFreshAccessToken(user._id);
 
         res
           .status(200)
-          .cookie("accessToken", accessToken, options)
+          .cookie("accessToken", accessToken, options )
           .json(
             new ApiResponse(200, {
               success: "User login successfully",
