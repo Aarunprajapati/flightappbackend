@@ -64,17 +64,16 @@ const userController = {
           res.status(404).json({ message: "Invalid Password" });
         }
 
-        const options = {
-          httpOnly: true,
-          path: "/",
-          secure: true,
-        };
+          // const options = {
+          //   httpOnly: true,
+          //   path: "/",
+          //   secure: true,
+          // };
 
         const { accessToken } = await generateFreshAccessToken(user._id);
-
+        res.cookie("accessToken", accessToken,  { httpOnly: true })
         res
           .status(200)
-          .cookie("accessToken", accessToken, options)
           .json(
             new ApiResponse(200, {
               success: "User login successfully",
