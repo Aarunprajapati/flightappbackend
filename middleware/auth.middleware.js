@@ -23,7 +23,8 @@ export const VerifyJwt = async (req, res, next) => {
     req.user = user
     next()
   } catch (error) {
-    console.log(error.message, "error in verifyJwt")
-    return null
+    return{
+      error: "unauthorization user"
+    }
   }
 };
