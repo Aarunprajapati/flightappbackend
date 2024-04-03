@@ -5,6 +5,10 @@ const bookingSchema = new mongoose.Schema({
         ref: "Flight",
         required: true
     },
+    fare:{
+        type:String,
+        required:true
+    },
     code: {
         dial_code: {
             type: String,
