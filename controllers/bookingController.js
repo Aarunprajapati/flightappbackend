@@ -45,6 +45,7 @@ const bookingController = {
           nationality: Nationality,
           gender: Gender,
         },
+        
       });
 
       // Create a checkout session in Stripe
