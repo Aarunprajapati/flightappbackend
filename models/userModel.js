@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import jwt from "jsonwebtoken"
 
 
 const userSchema = new mongoose.Schema({
@@ -19,6 +20,17 @@ const userSchema = new mongoose.Schema({
     timestamps:true
 })
 
+userSchema.methods.generateAccessToken = async function(){
+    return await jwt.sign(
+        {
+            _id: this._id
+        },
+        process.env.ACCESS_TOKEN_SECRET,
+        {
+            expiresIn: process.env.ACCESS_TOKEN_EXPIRY
+        }
+    )
+}
 
 const userModel = mongoose.model("user", userSchema)
 export default userModel;
