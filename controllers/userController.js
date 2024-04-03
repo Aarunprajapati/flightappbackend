@@ -73,7 +73,6 @@ const userController = {
         };
 
         const { accessToken } = await generateFreshAccessToken(user._id);
-        res.cookie("accessToken", accessToken,  { httpOnly: true })
         res
           .status(200)
           .cookie("accessToken", accessToken, options )
