@@ -16,7 +16,7 @@ const flightController = {
 
         if (!sourceCitiesSet.has(sourceCityName)) {
           sourceCitiesSet.add(sourceCityName);
-          uniqueSourceAirports.push(flight.displayData.source);
+          uniqueSourceAirports.push(flight.displayData.source)
         }
 
         if (!destinationCitiesSet.has(destinationCityName)) {

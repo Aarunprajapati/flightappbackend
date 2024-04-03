@@ -68,15 +68,15 @@ const userController = {
           httpOnly: true,
           path: "/",
           secure: true,
-          sameSite:"none"
-         
+          sameSite: "none"
+
         };
 
         const { accessToken } = await generateFreshAccessToken(user._id);
 
         res
           .status(200)
-          .cookie("accessToken", accessToken, options )
+          .cookie("accessToken", accessToken, options)
           .json(
             new ApiResponse(200, {
               success: "User login successfully",
@@ -92,16 +92,19 @@ const userController = {
     res.send({ user: req.user });
   },
   async logOut(req, res) {
-    const user= await userModel.findByIdAndUpdate(req.user._id);
-    const options ={
-      httpOnly:true,
-      secure:true
+    const user = await userModel.findByIdAndUpdate(req.user._id);
+    if (!user) return null;
+    const options = {
+      httpOnly: true,
+      secure: true,
+      path: "/",
+      sameSite: "none"
     }
     res.status(200)
-    .clearCookie("accessToken", options)
-    .json(
-      new ApiResponse(200, {}, "user logged out successfully")
-    )
+      .clearCookie("accessToken", options)
+      .json(
+        new ApiResponse(200, {}, "user logged out successfully")
+      )
   },
 };
 
