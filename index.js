@@ -12,7 +12,7 @@ const DATABASEURL = process.env.DATABASE_URL;
 connectDB(DATABASEURL);
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: `${process.env.FRENDEND_URL}`,
     credentials: true,
     preflightContinue: true,
   }),
