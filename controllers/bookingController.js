@@ -64,8 +64,8 @@ const bookingController = {
           },
         ],
         customer: customer.id,
-        success_url: 'http://localhost:3000/success', // Replace with your actual success URL
-        cancel_url: 'http://localhost:3000/error', // Replace with your actual cancel URL
+        success_url: 'http://localhost:3000/', // Replace with your actual success URL
+        cancel_url: 'http://localhost:3000/', // Replace with your actual cancel URL
       });
 
       // Save booking details in your database
