@@ -1,34 +1,24 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "backend/index.js",
-      "use": "@vercel/node"
+    "version": 2,
+    "builds": [
+      {
+        "src": "index.js",
+        "use": "@vercel/node"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "index.js"
+      }
+    ],
+    "env": {
+      "NODE_ENV": "production"
     },
-    {
-      "src": "frontend/build",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/user/(.*)",
-      "dest": "backend/index.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "frontend/build/$1",
-      "headers": {
-        "Cache-Control": "s-maxage=1, stale-while-revalidate"
+    "build": {
+      "env": {
+        "CUSTOM_KEY": "value"
       }
     }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  },
-  "build": {
-    "env": {
-      "CUSTOM_KEY": "value"
-    }
   }
-}
+  
