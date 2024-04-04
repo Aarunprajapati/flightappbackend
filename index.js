@@ -13,7 +13,7 @@ connectDB(DATABASEURL);
 
 app.use(
   cors({
-    origin: "http://flightapp-wine.vercel.app",
+    origin: "https://arun--stupendous-sundae-708f98.netlify.app",
     credentials: true,
     preflightContinue: true,
   }),
