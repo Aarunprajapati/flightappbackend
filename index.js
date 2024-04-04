@@ -12,7 +12,7 @@ const DATABASEURL = process.env.DATABASE_URL;
 connectDB(DATABASEURL);
 app.use(
   cors({
-    origin: "http://flightapp-wine.vercel.app",
+    origin: "*",
     credentials: true,
     preflightContinue: true,
   }),
