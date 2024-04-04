@@ -14,6 +14,8 @@ app.use(
   cors({
     origin: "https://flightapp-wine.vercel.app",
     credentials: true,
+    httpOnly: true,
+    httpOnlyFromOrigin: true,
     preflightContinue: true,
     methods: ['GET', "POST"]
   }),
