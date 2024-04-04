@@ -18,9 +18,20 @@
         "PATCH",
         "OPTIONS"
       ],
-      "headers": {
-        "Access-Control-Allow-Origin": "*"
-      }
+      "headers": [
+        {
+          "source": "/(.*)",
+          "headers": [
+            { "key": "Access-Control-Allow-Origin", "value": "*" }
+          ]
+        },
+        {
+          "source": "/https://flightapp-wine.vercel.app/(.*)",
+          "headers": [
+            { "key": "Access-Control-Allow-Origin", "value": "*" }
+          ]
+        }  
+    ]
     }
   ],
   "env": {
