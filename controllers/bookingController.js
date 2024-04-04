@@ -4,7 +4,7 @@ import Stripe from "stripe";
 const stripe = new Stripe('sk_test_51P11cvSHl2BiGxNdVAvkRuoRTWR4CqZ5WrcHVW6tAdDtf8KEk1AFOR9U1uDXH1I4Phs5MS252llHLPt0FErxxdOV009lnFO2s0');
 
 const bookingController = {
-  async registerBooking(req, res) {
+  async registerBooking(req, res) { 
     try {
       const {
         id,
@@ -39,12 +39,14 @@ const bookingController = {
       // Create a customer in Stripe
       const customer = await stripe.customers.create({
         email: email,
-        name: `${firstName} ${lastName}`,
-        phone: phone,
-        metadata: {
-          nationality: Nationality,
-          gender: Gender,
-        },
+        name: firstName,
+        address:{
+          line1: '510 Townsend St',
+          postal_code: '98140',
+          city: 'San Francisco',
+          state: 'CA',
+          country: 'US',
+        }
       });
 
       // Create a checkout session in Stripe
@@ -64,7 +66,7 @@ const bookingController = {
           },
         ],
         customer: customer.id,
-        success_url: 'http://localhost:3000/', // Replace with your actual success URL
+        success_url: 'http://localhost:3000/'  , // Replace with your actual success URL
         cancel_url: 'http://localhost:3000/', // Replace with your actual cancel URL
       });
 
