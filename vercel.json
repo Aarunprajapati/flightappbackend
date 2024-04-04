@@ -12,10 +12,8 @@
       "dest": "index.js"
     }
   ],
-  "server": {
-    "cors": {
-      "origin": "http://flightapp-wine.vercel.app"
-    }
+  "cors": {
+    "origin": "http://flightapp-wine.vercel.app"
   },
   "env": {
     "NODE_ENV": "production"
