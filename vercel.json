@@ -30,9 +30,5 @@
     "env": {
       "CUSTOM_KEY": "value"
     }
-  },
-  "cors": {
-    "origin": "https://flightappbackend-k5rb.vercel.app",
-    "credentials": true
   }
 }
