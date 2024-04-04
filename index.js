@@ -15,7 +15,7 @@ app.use(
     origin: "http://flightapp-wine.vercel.app",
     credentials: true,
     preflightContinue: true,
-    methods:['GET', "POST"]
+    methods: ['GET', "POST"]
   }),
 );
 app.use(express.urlencoded({ limit: "16kb" }));
