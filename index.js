@@ -12,12 +12,9 @@ const DATABASEURL = process.env.DATABASE_URL;
 connectDB(DATABASEURL);
 app.use(
   cors({
-    origin: "https://flightapp-wine.vercel.app",
+    origin: "http://flightapp-wine.vercel.app",
     credentials: true,
-    httpOnly: true,
-    httpOnlyFromOrigin: true,
     preflightContinue: true,
-    methods: ['GET', "POST"]
   }),
 );
 app.use(express.urlencoded({ limit: "16kb" }));
