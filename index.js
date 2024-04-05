@@ -13,9 +13,11 @@ connectDB(DATABASEURL);
 
 app.use(
   cors({
-    origin: "https://arun--stupendous-sundae-708f98.netlify.app",
+    origin: "http://localhost:3000",
     credentials: true,
     preflightContinue: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Methods allowed
+    allowedHeaders: ['Content-Type', 'Authorization']
   }),
 );
 app.use(express.urlencoded({ limit: "16kb" }));
