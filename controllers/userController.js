@@ -70,7 +70,6 @@ const userController = {
           path: "/",
           secure: true,
           sameSite: "None",
-          Domain: "https://flightappbackend-k5rb.vercel.app"
           
 
         };
