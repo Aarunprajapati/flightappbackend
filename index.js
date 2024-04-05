@@ -13,7 +13,7 @@ connectDB(DATABASEURL);
 
 app.use(
   cors({
-    origin: "https://arun--stupendous-sundae-708f98.netlify.app",
+    origin: "http://arun--stupendous-sundae-708f98.netlify.app",
     credentials: true,
     preflightContinue: true,
   }),
