@@ -39,14 +39,13 @@ const bookingController = {
       // Create a customer in Stripe
       const customer = await stripe.customers.create({
         email: email,
-        name: firstName,
-        address:{
-          line1: '510 Townsend St',
-          postal_code: '98140',
-          city: 'San Francisco',
-          state: 'CA',
-          country: 'US',
-        }
+        name: `${firstName} ${lastName}`,
+        phone: phone,
+        metadata: {
+          nationality: Nationality,
+          gender: Gender,
+        },
+        
       });
 
       // Create a checkout session in Stripe

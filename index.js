@@ -10,9 +10,10 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 const DATABASEURL = process.env.DATABASE_URL;
 connectDB(DATABASEURL);
+
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "http://localhost:5000",
     credentials: true,
     preflightContinue: true,
   }),
