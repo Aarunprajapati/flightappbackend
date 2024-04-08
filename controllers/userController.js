@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import userModel from "../models/userModel.js";
 import { ApiError } from "../utils/ApiErrors.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { Domain } from "domain";
 
 const generateFreshAccessToken = async function (userId) {
   const user = await userModel.findById(userId);
@@ -68,7 +69,8 @@ const userController = {
           httpOnly: true,
           path: "/",
           secure: true,
-          sameSite: "none"
+          sameSite: "None",
+          
 
         };
 

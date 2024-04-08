@@ -16,6 +16,8 @@ app.use(
     origin: "http://localhost:5000",
     credentials: true,
     preflightContinue: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
   }),
 );
 app.use(express.urlencoded({ limit: "16kb" }));
