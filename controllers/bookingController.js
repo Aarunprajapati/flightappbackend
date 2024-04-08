@@ -8,7 +8,7 @@ const bookingController = {
     try {
       const {
         id,
-        fare,
+        fare, // This initially captures the per-member fare from the request
         code: { dial_code },
         phone,
         Gender,
@@ -16,25 +16,27 @@ const bookingController = {
         email,
         firstName,
         lastName,
+        members,
       } = req.body;
 
       // Check if all required fields are provided
-      if (
-        !(
-          id &&
-          fare &&
-          phone &&
-          Gender &&
-          firstName &&
-          lastName &&
-          Nationality &&
-          email
-        )
-      ) {
-        return res
-          .status(400)
-          .json({ error: "Please provide all the required details" });
+      if (!id || !fare || !phone || !Gender || !firstName || !lastName || !Nationality || !email) {
+        return res.status(400).json({ error: "Please provide all the required details" });
       }
+      const totalFare = parseInt(fare) * members.length * 100; 
+      
+      const booking = new BookingModel({
+        id,
+        fare: totalFare / 100, 
+        code: { dial_code },
+        phone,
+        Gender,
+        Nationality,
+        email,
+        firstName,
+        lastName,
+        members
+      });
 
       // Create a customer in Stripe
       const customer = await stripe.customers.create({
@@ -45,7 +47,6 @@ const bookingController = {
           nationality: Nationality,
           gender: Gender,
         },
-        
       });
 
       // Create a checkout session in Stripe
@@ -59,9 +60,9 @@ const bookingController = {
               product_data: {
                 name: "Booking Flight",
               },
-              unit_amount: fare * 100, // Amount should be in cents
+              unit_amount: totalFare, // Use the calculated totalFare
             },
-            quantity: 1, // You can adjust quantity if needed
+            quantity: 1,
           },
         ],
         customer: customer.id,
@@ -70,17 +71,6 @@ const bookingController = {
       });
 
       // Save booking details in your database
-      const booking = new BookingModel({
-        id,
-        fare,
-        code: { dial_code },
-        phone,
-        Gender,
-        Nationality,
-        email,
-        firstName,
-        lastName,
-      });
       await booking.save();
 
       // Respond with success message and checkout session URL
