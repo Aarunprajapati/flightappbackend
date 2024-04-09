@@ -1,4 +1,5 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
+import { type } from 'os';
 
 const { Schema } = mongoose;
 
@@ -7,6 +8,10 @@ const bookingSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Flight",
         required: true
+    },
+    user:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref: "User",
     },
     fare: {
         type: String,
@@ -22,35 +27,33 @@ const bookingSchema = new Schema({
         type: String,
         required: true
     },
-  
-  
     email: {
         type: String,
         required: true
     },
     members: [{
-        firstName: {
+        firstName:{
             type: String,
             required: true
         },
-        lastName: {
+        lastName:{
             type: String,
             required: true
         },
-        Gender: {
+        Gender:{
             type: String,
             required: true
         },
-        Nationality: {
+        Nationality:{
             type: String,
             required: true
-        }
-    }],
+        },
+}],
 }, {
     timestamps: true
 });
 
 
 
-const BookingModel = mongoose.model("Booking", bookingSchema);
+const BookingModel = mongoose.model("booking", bookingSchema);
 export default BookingModel;
