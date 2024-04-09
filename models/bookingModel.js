@@ -1,8 +1,10 @@
 import mongoose from "mongoose";
 
-const bookingSchema = new mongoose.Schema({
+const { Schema } = mongoose;
+
+const bookingSchema = new Schema({
     id: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "Flight",
         required: true
     },
@@ -11,7 +13,7 @@ const bookingSchema = new mongoose.Schema({
         required: true
     },
     code: {
-        dial_code: {
+        dial_Code: {
             type: String,
             required: true
         }
@@ -20,23 +22,9 @@ const bookingSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    Gender: {
-        type: String,
-        required: true
-    },    
-    Nationality: {
-        type: String,
-        required: true,
-    },
+  
+  
     email: {
-        type: String,
-        required: true
-    },
-    firstName: {
-        type: String,
-        required: true
-    },
-    lastName: {
         type: String,
         required: true
     },
@@ -49,18 +37,20 @@ const bookingSchema = new mongoose.Schema({
             type: String,
             required: true
         },
-        age: {
-            type: Number,
+        Gender: {
+            type: String,
             required: true
         },
-        gender: {
+        Nationality: {
             type: String,
             required: true
         }
     }],
-},{
+}, {
     timestamps: true
 });
 
-const BookingModel = mongoose.model("booking", bookingSchema);
+
+
+const BookingModel = mongoose.model("Booking", bookingSchema);
 export default BookingModel;
