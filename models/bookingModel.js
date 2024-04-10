@@ -18,7 +18,7 @@ const bookingSchema = new Schema({
         required: true
     },
     code: {
-        dial_Code: {
+        dial_code: {
             type: String,
             required: true
         }

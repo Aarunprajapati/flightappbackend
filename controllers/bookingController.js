@@ -22,7 +22,7 @@ const bookingController = {
       const booking = new BookingModel({
         id,
         fare: totalFare,
-        code: { dial_code },
+        code: {  dial_code },
         phone,
         email,
         members 
@@ -55,6 +55,17 @@ const bookingController = {
         success_url: "http://localhost:3000",
         cancel_url: "http://localhost:3000",
       });
+ 
+      const invoice = await stripe.invoices.create({
+        customer: customer.id,
+        collection_method: 'send_invoice', 
+        description: "Flight Booking",
+        currency: 'INR',
+        auto_advance: true,
+        days_until_due: 7,
+      });
+
+      await stripe.invoices.sendInvoice(invoice.id);
       await booking.save();
       // Respond with success message and checkout session URL
       res

@@ -37,7 +37,7 @@ const userController = {
         httpOnly: true,
         path: "/",
         secure: true,
-        sameSite: 'None',
+        sameSite: 'none',
       };
       const accessToken = await user.generateAccessToken();
       res
@@ -69,7 +69,7 @@ const userController = {
           httpOnly: true,
           path: "/",
           secure: true,
-          sameSite: "None",
+          sameSite: "none",
           
 
         };
@@ -93,19 +93,27 @@ const userController = {
     res.send({ user: req.user });
   },
   async logOut(req, res) {
-    const user = await userModel.findByIdAndUpdate(req.user._id);
-    if (!user) return null;
-    const options = {
-      httpOnly: true,
-      secure: true,
-      path: "/",
-      sameSite: "none"
+    // const user = await userModel.findByIdAndUpdate(req.user._id);
+    // if (!user) return null;
+    // const options = {
+    //   httpOnly: true,
+    //   secure: true,
+    //   path: "/",
+    //   sameSite: "none"
+    // }
+    // res.status(200)
+    //   .clearCookie("accessToken", options)
+    //   .json(
+    //     new ApiResponse(200, {}, "user logged out successfully")
+    //   )
+    try {
+      res.cookie("accessToken","",{
+        maxAge:0
+      })
+      res.status(200).json({success:"logout successfully"})
+    } catch (error) {
+      return res.status(406).json({error:"internal server error"})
     }
-    res.status(200)
-      .clearCookie("accessToken", options)
-      .json(
-        new ApiResponse(200, {}, "user logged out successfully")
-      )
   },
 };
 
