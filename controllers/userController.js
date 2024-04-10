@@ -70,8 +70,7 @@ const userController = {
           path: "/",
           secure: true,
           sameSite: "None",
-          
-
+          maxAge: 86400 * 1000
         };
 
         const { accessToken } = await generateFreshAccessToken(user._id);
@@ -93,13 +92,16 @@ const userController = {
     res.send({ user: req.user });
   },
   async logOut(req, res) {
-    const user = await userModel.findByIdAndUpdate(req.user._id);
+    const user = await userModel.findByIdAndUpdate(
+    req.user._id
+  );
     if (!user) return null;
     const options = {
       httpOnly: true,
       secure: true,
       path: "/",
-      sameSite: "none"
+      sameSite: "None",
+      maxAge: 0
     }
     res.status(200)
       .clearCookie("accessToken", options)

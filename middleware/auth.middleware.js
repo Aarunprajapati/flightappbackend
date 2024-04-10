@@ -8,7 +8,7 @@ export const VerifyJwt = async (req, res, next) => {
       req.cookies?.accessToken ||
       req.header("Authorization")?.replace("Bearer ", "");
       console.log(token, "token")
-    if (!token) {
+    if (!token && token === "undefined") {
       throw new ApiError(404, "Invalid token");
     }
     const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
@@ -16,7 +16,7 @@ export const VerifyJwt = async (req, res, next) => {
       throw new ApiError(404, "Token Verify Failed")
     }
     const user = await userModel.findById(decodedToken._id).select("-password")
-
+    console.log(user, "middleware")
     if (!user) {
       throw new ApiError(404, "User Not Found")
     }
