@@ -1,6 +1,5 @@
 import BookingModel from "../models/bookingModel.js";
 import Stripe from "stripe";
-import userModel from "../models/userModel.js"; // Ensure this is used if necessary, currently it's imported but not used.
 
 const stripe = new Stripe(
   "sk_test_51P11cvSHl2BiGxNdVAvkRuoRTWR4CqZ5WrcHVW6tAdDtf8KEk1AFOR9U1uDXH1I4Phs5MS252llHLPt0FErxxdOV009lnFO2s0",
@@ -36,8 +35,6 @@ const bookingController = {
         phone: phone
       });
 
-      
-
       const checkoutSession = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         mode: 'payment',
@@ -56,6 +53,7 @@ const bookingController = {
         cancel_url: "http://localhost:3000",
       });
  
+      // Create an invoice
       const invoice = await stripe.invoices.create({
         customer: customer.id,
         collection_method: 'send_invoice', 
@@ -65,12 +63,14 @@ const bookingController = {
         days_until_due: 7,
       });
 
+      // Automatically send the invoice
       await stripe.invoices.sendInvoice(invoice.id);
+
       await booking.save();
       // Respond with success message and checkout session URL
       res
         .status(200)
-        .json({ success: "Booking has been done", url: checkoutSession.url });
+        .json({ success: "Booking has been done", url:checkoutSession.url });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Internal server error" });

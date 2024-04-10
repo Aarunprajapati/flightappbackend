@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { type } from 'os';
+
 
 const { Schema } = mongoose;
 
@@ -10,8 +10,8 @@ const bookingSchema = new Schema({
         required: true
     },
     user:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user",
     },
     fare: {
         type: String,
