@@ -10,18 +10,18 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 const DATABASEURL = process.env.DATABASE_URL;
 connectDB(DATABASEURL);
-
+app.use(cookieParser());
 app.use(
   cors({
     origin: "http://localhost:3000",
     credentials: true,
     preflightContinue: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Methods allowed
-    allowedHeaders: ['Content-Type', 'Authorization']
+    // allowedHeaders: ['Content-Type', 'Authorization']
   }),
 );
 app.use(express.urlencoded({ limit: "16kb" }));
-app.use(cookieParser());
+
 app.use(express.json({ limit: "16kb" }));
 
 app.use("/api/user", userRoutes);
