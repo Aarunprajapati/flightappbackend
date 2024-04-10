@@ -7,7 +7,6 @@ const stripe = new Stripe('sk_test_51P11cvSHl2BiGxNdVAvkRuoRTWR4CqZ5WrcHVW6tAdDt
 const bookingController = {
   async registerBooking(req, res) {
     try {
-      // Assuming req.user is set by your authentication middleware
       if (!req.user) {
         return res.status(401).json({ error: "User not authenticated" });
       }
@@ -16,24 +15,21 @@ const bookingController = {
         id, fare, code: { dial_code }, phone, email, members
       } = req.body;
 
-      console.log(req.body, "req.body");
-
-      // Check if all required fields are provided
       if (!id || !fare || !phone || !email || !members || members.length === 0) {
         return res.status(400).json({ error: "Please provide all the required details including members information" });
       }
 
       const totalFare = fare * members.length || fare;
-      
-      // Find the logged-in user from the database using the ID from req.user
-      const user = await userModel.findById(req.user._id);
+
+
+      const user = await userModel.findById(req.user?._id);
       if (!user) {
         return res.status(404).json({ error: "User not found" });
       }
-console.log(user, "user")
+     
       const customer = await stripe.customers.create({
-        email: user.email, 
-        name: user.name, 
+        email: user.email,
+        name: user.name,
         phone: phone
       });
 

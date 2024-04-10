@@ -4,17 +4,13 @@ import jwt from "jsonwebtoken";
 import { getKeyFromCookie } from "../utils/helpers.js";
 
 export const VerifyJwt = async (req, res, next) => {
-  console.log(req.route, req.pathname, req.originalUrl,req.headers.cookie,' cookies')
-  console.log(req.cookies,req.signedCookies,' cookies2 ')
-  console.log(req.header('cookie'),req.header("authorization"),req.header("Authorization"),' headers ')
+  // console.log(req.route, req.pathname, req.originalUrl,req.headers.cookie,' cookies')
+  // console.log(req.cookies,req.signedCookies,' cookies2 ')
+  // console.log(req.header('cookie'),req.header("authorization"),req.header("Authorization"),' headers ')
   try {
     // req.cookies?.accessToken
-    //
-    console.log('::', "token1")
     const token = req.cookies?.accessToken ||
       req.header("Authorization")?.replace("Bearer ", "");
-    console.log('::',token, "token")
-    // res.json({msg:'ok'})
     if (!token && token === "undefined") {
       throw new ApiError(404, "Invalid token");
     }
@@ -31,7 +27,7 @@ export const VerifyJwt = async (req, res, next) => {
     req.user = user
     next()
   } catch (error) {
-    return{
+    return {
       error: "unauthorization user"
     }
   }
