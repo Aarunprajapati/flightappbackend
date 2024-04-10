@@ -13,6 +13,7 @@ routes.post('/login', userController.login);
 
 //Secured routes
 routes.post("/logout", VerifyJwt ,userController.logOut)
+routes.post('/booking',VerifyJwt,  bookingController.registerBooking)
 
 // flights routes
 routes.get('/displaydata', flightController.displayData)
@@ -21,5 +22,4 @@ routes.get('/destinationcity', flightController.destinationData)
 routes.get("/allflight", flightController.allFlightData)
 routes.get("/matchingData", flightController.matchingData)
 routes.get("/searchData", flightController.searchData)
-routes.post('/booking', bookingController.registerBooking)
 export default routes;      

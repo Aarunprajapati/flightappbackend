@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { type } from 'os';
+
 
 const bookingSchema = new mongoose.Schema({
     id: {
@@ -8,8 +8,8 @@ const bookingSchema = new mongoose.Schema({
         required: true
     },
     user:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user",
     },
     fare: {
         type: String,
