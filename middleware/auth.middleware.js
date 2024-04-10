@@ -1,13 +1,20 @@
 import userModel from "../models/userModel.js";
 import { ApiError } from "../utils/ApiErrors.js";
 import jwt from "jsonwebtoken";
+import { getKeyFromCookie } from "../utils/helpers.js";
 
 export const VerifyJwt = async (req, res, next) => {
+  console.log(req.route, req.pathname, req.originalUrl,req.headers.cookie,' cookies')
+  console.log(req.cookies,req.signedCookies,' cookies2 ')
+  console.log(req.header('cookie'),req.header("authorization"),req.header("Authorization"),' headers ')
   try {
-    const token =
-      req.cookies?.accessToken ||
+    // req.cookies?.accessToken
+    //
+    console.log('::', "token1")
+    const token = req.cookies?.accessToken ||
       req.header("Authorization")?.replace("Bearer ", "");
-      console.log(token, "token")
+    console.log('::',token, "token")
+    // res.json({msg:'ok'})
     if (!token && token === "undefined") {
       throw new ApiError(404, "Invalid token");
     }

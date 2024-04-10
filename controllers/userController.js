@@ -92,7 +92,7 @@ const userController = {
     res.send({ user: req.user });
   },
   async logOut(req, res) {
-    const user = await userModel.findByIdAndUpdate(
+    const user = await userModel.findById(
     req.user._id
   );
     if (!user) return null;
