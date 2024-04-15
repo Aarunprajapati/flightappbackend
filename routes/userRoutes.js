@@ -3,6 +3,7 @@ import userController from "../controllers/userController.js";
 import flightController from '../controllers/flightController.js';
 import  {VerifyJwt} from '../middleware/auth.middleware.js';
 import bookingController from '../controllers/bookingController.js';
+import mailController from '../controllers/mailController.js';
 const routes = express.Router();
 
 // public routes
@@ -12,6 +13,7 @@ routes.post('/login', userController.login);
 //Secured routes
 routes.post("/logout", VerifyJwt , userController.logOut)
 routes.post('/booking',VerifyJwt,  bookingController.registerBooking)
+routes.post('/sendmail',VerifyJwt,  mailController.sendmail)
 
 // flights routes
 routes.get('/displaydata', flightController.displayData)
