@@ -59,21 +59,10 @@ const bookingController = {
           },
         ],
         customer: customer.id,
-        success_url: 'http://localhost:3000/checkoutpage', // Replace with your actual success URL
-        cancel_url: 'http://localhost:3000/', // Replace with your actual cancel URL
+        success_url: 'http://localhost:3000/checkoutpage', 
+        cancel_url: 'http://localhost:3000/', 
       });
-
-      // if(checkoutSession.success_url === 'http://localhost:3000/'){
-      //   const invoice = await stripe.invoices.create({
-      //     customer: customer.id,
-      //     description: 'Booking Flight',
-      //     auto_advance: true,
-      //     collection_method: 'send_invoice',
-      //     days_until_due: 7
-      //   });
-      //   const invoices = await stripe.invoices.sendInvoice(invoice.id);
-      //   await sendEmail(user.email, invoices.invoice_pdf)
-      // }     
+  
       
       const booking = new BookingModel({
         id,
