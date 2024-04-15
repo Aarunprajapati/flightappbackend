@@ -7,16 +7,15 @@ export const sendEmail = async (email, url) => {
 
   try {
     var transporter = nodemailer.createTransport({
-      host: "sandbox.smtp.mailtrap.io",
-      port: 2525,
+      service: 'gmail',
       auth: {
-        user: "d2600d7e9a64bc",
-        pass: "19b651455e7b50"
+        user: "rohitkumar302013@gmail.com",
+        pass: "gceg pwlk izba popt"
       }
     });
 
     const emailOptions = {
-      from: 'lovearun010@gmail.com',
+      from :'rohitkumar302013@gmail.com',
       to: email,
       subject: "Invoice Email from Flights App",
       text: "Invoice Email, Please download your Invoice",

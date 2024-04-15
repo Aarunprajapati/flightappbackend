@@ -1,10 +1,7 @@
-
-import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import userModel from "../models/userModel.js";
 import { ApiError } from "../utils/ApiErrors.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { Domain } from "domain";
 
 const generateFreshAccessToken = async function (userId) {
   const user = await userModel.findById(userId);
@@ -37,7 +34,7 @@ const userController = {
         httpOnly: true,
         path: "/",
         secure: true,
-        sameSite: 'None',
+        sameSite: "none",
       };
       const accessToken = await user.generateAccessToken();
       res
@@ -70,7 +67,7 @@ const userController = {
           path: "/",
           secure: true,
           sameSite: "None",
-          maxAge: 86400 * 1000
+          maxAge: 86400 * 1000,
         };
 
         const { accessToken } = await generateFreshAccessToken(user._id);
@@ -92,23 +89,16 @@ const userController = {
     res.send({ user: req.user });
   },
   async logOut(req, res) {
-    const user = await userModel.findById(
-    req.user._id
-  );
-    if (!user) return null;
-    const options = {
-      httpOnly: true,
-      secure: true,
-      path: "/",
-      sameSite: "None",
-      maxAge: 0
+    try {
+      res.cookie("accessToken","",{
+        maxAge:0
+      })
+      res.status(200).json({success:"logout successfully"})
+    } catch (error) {
+      return res.status(406).json({error:"internal server error"})
     }
-    res.status(200)
-      .clearCookie("accessToken", options)
-      .json(
-        new ApiResponse(200, {}, "user logged out successfully")
-      )
   },
+  
 };
 
 export default userController;
