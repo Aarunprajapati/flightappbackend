@@ -1,86 +1,79 @@
 import BookingModel from "../models/bookingModel.js";
 import Stripe from "stripe";
+import userModel from "../models/userModel.js";
+import { sendEmail } from "../utils/nodeMailer.js";
 
-const stripe = new Stripe('sk_test_51P11cvSHl2BiGxNdVAvkRuoRTWR4CqZ5WrcHVW6tAdDtf8KEk1AFOR9U1uDXH1I4Phs5MS252llHLPt0FErxxdOV009lnFO2s0');
+const stripe = new Stripe(
+  "sk_test_51P11cvSHl2BiGxNdVAvkRuoRTWR4CqZ5WrcHVW6tAdDtf8KEk1AFOR9U1uDXH1I4Phs5MS252llHLPt0FErxxdOV009lnFO2s0"
+);
+
+
 
 const bookingController = {
   async registerBooking(req, res) {
     try {
+      if (!req.user) {
+        return res.status(401).json({ error: "User not authenticated" });
+      }
+
       const {
         id,
         fare,
         code: { dial_code },
         phone,
-        Gender,
-        Nationality,
         email,
-        firstName,
-        lastName,
+        members,
       } = req.body;
 
-      // Check if all required fields are provided
-      if (
-        !(
-          id &&
-          fare &&
-          phone &&
-          Gender &&
-          firstName &&
-          lastName &&
-          Nationality &&
-          email
-        )
-      ) {
-        return res
-          .status(400)
-          .json({ error: "Please provide all the required details" });
+      if (!id || !fare || !phone || !email || !members || members.length === 0) {
+        return res.status(400).json({
+          error: "Please provide all the required details including members information",
+        });
       }
 
-      // Create a customer in Stripe
-      const customer = await stripe.customers.create({
-        email: email,
-        name: `${firstName} ${lastName}`,
-        phone: phone,
-        metadata: {
-          nationality: Nationality,
-          gender: Gender,
-        },
-        
-      });
+      const totalFare = fare * members.length || fare;
 
-      // Create a checkout session in Stripe
+
+      const user = await userModel.findById(req.user?._id);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      const customer = await stripe.customers.create({
+        email: user.email,
+        name: user.name,
+        phone: phone
+      });
       const checkoutSession = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        mode: 'payment',
+        payment_method_types: ["card"],
+        mode: "payment",
         line_items: [
           {
             price_data: {
-              currency: 'INR',
+              currency: "INR",
               product_data: {
                 name: "Booking Flight",
               },
-              unit_amount: fare * 100, // Amount should be in cents
+              unit_amount: totalFare * 100,
             },
-            quantity: 1, // You can adjust quantity if needed
+            quantity: 1,
           },
         ],
         customer: customer.id,
-        success_url: 'http://localhost:3000/', // Replace with your actual success URL
-        cancel_url: 'http://localhost:3000/', // Replace with your actual cancel URL
+        success_url: 'http://localhost:3000/checkoutpage', 
+        cancel_url: 'http://localhost:3000/', 
       });
-
-      // Save booking details in your database
+  
+      
       const booking = new BookingModel({
         id,
-        fare,
+        fare: totalFare,
         code: { dial_code },
         phone,
-        Gender,
-        Nationality,
         email,
-        firstName,
-        lastName,
+        user: user._id,
+        members,
       });
+     
       await booking.save();
 
       // Respond with success message and checkout session URL

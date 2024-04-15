@@ -1,10 +1,7 @@
-
-import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import userModel from "../models/userModel.js";
 import { ApiError } from "../utils/ApiErrors.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { Domain } from "domain";
 
 const generateFreshAccessToken = async function (userId) {
   const user = await userModel.findById(userId);
@@ -37,7 +34,7 @@ const userController = {
         httpOnly: true,
         path: "/",
         secure: true,
-        sameSite: 'None',
+        sameSite: "none",
       };
       const accessToken = await user.generateAccessToken();
       res
@@ -70,8 +67,7 @@ const userController = {
           path: "/",
           secure: true,
           sameSite: "None",
-          
-
+          maxAge: 86400 * 1000,
         };
 
         const { accessToken } = await generateFreshAccessToken(user._id);
@@ -99,7 +95,7 @@ const userController = {
       httpOnly: true,
       secure: true,
       path: "/",
-      sameSite: "none"
+      sameSite: "None"
     }
     res.status(200)
       .clearCookie("accessToken", options)
@@ -107,6 +103,7 @@ const userController = {
         new ApiResponse(200, {}, "user logged out successfully")
       )
   },
+
 };
 
 export default userController;
