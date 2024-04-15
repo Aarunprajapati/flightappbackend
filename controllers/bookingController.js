@@ -59,8 +59,8 @@ const bookingController = {
           },
         ],
         customer: customer.id,
-        success_url: "http://localhost:3000/", // Replace with your actual success URL
-        cancel_url: "http://localhost:3000/", // Replace with your actual cancel URL
+        success_url: "http://localhost:3000/", 
+        cancel_url: "http://localhost:3000/", 
       });
 
       if(checkoutSession.success_url === 'http://localhost:3000/'){
@@ -88,7 +88,7 @@ const bookingController = {
       await booking.save();
 
       // Respond with success message and checkout session URL
-      res.status(200).json({ success: "Booking has been done", url: checkoutSession.url, invoice:invoices4 });
+      res.status(200).json({ success: "Booking has been done", url: checkoutSession.url });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Internal server error" });
