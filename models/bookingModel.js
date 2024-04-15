@@ -7,7 +7,7 @@ const bookingSchema = new mongoose.Schema({
         ref: "Flight",
         required: true
     },
-    user:{
+    user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "user",
     },
@@ -30,23 +30,23 @@ const bookingSchema = new mongoose.Schema({
         required: true
     },
     members: [{
-        firstName:{
+        firstName: {
             type: String,
             required: true
         },
-        lastName:{
+        lastName: {
             type: String,
             required: true
         },
-        Gender:{
+        Gender: {
             type: String,
             required: true
         },
-        Nationality:{
+        Nationality: {
             type: String,
             required: true
         },
-}],
+    }],
 }, {
     timestamps: true
 });

@@ -1,8 +1,11 @@
 import BookingModel from "../models/bookingModel.js";
 import Stripe from "stripe";
 import userModel from "../models/userModel.js";
+import { sendEmail } from "../utils/nodeMailer.js";
 
 const stripe = new Stripe('sk_test_51P11cvSHl2BiGxNdVAvkRuoRTWR4CqZ5WrcHVW6tAdDtf8KEk1AFOR9U1uDXH1I4Phs5MS252llHLPt0FErxxdOV009lnFO2s0');
+
+
 
 const bookingController = {
   async registerBooking(req, res) {
@@ -26,13 +29,11 @@ const bookingController = {
       if (!user) {
         return res.status(404).json({ error: "User not found" });
       }
-     
       const customer = await stripe.customers.create({
         email: user.email,
         name: user.name,
         phone: phone
       });
-
       const checkoutSession = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         mode: 'payment',
@@ -51,7 +52,18 @@ const bookingController = {
         cancel_url: 'http://localhost:3000/', // Replace with your actual cancel URL
       });
 
-      // Create booking with a reference to the logged-in user
+      if(checkoutSession.success_url === 'http://localhost:3000/'){
+        const invoice = await stripe.invoices.create({
+          customer: customer.id,
+          description: 'Booking Flight',
+          auto_advance: true,
+          collection_method: 'send_invoice',
+          days_until_due: 7
+        });
+        const invoices = await stripe.invoices.sendInvoice(invoice.id);
+        await sendEmail(user.email, invoices.invoice_pdf)
+      }     
+      
       const booking = new BookingModel({
         id,
         fare: totalFare,
@@ -61,6 +73,7 @@ const bookingController = {
         user: user._id,
         members
       });
+     
       await booking.save();
       // Respond with success message and checkout session URL
       res.status(200).json({ success: "Booking has been done", url: checkoutSession.url });
