@@ -1,9 +1,11 @@
 import mongoose from 'mongoose';
 
 
-const bookingSchema = new mongoose.Schema({
+const { Schema } = mongoose;
+
+const bookingSchema = new Schema({
     id: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "Flight",
         required: true
     },
