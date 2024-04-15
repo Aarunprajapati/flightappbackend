@@ -10,8 +10,8 @@ routes.post('/register', userController.register)
 routes.post('/login', userController.login);
 
 //Secured routes
-routes.post("/logout", VerifyJwt ,userController.logOut)
-routes.post('/booking', VerifyJwt, bookingController.registerBooking)
+routes.post("/logout", VerifyJwt , userController.logOut)
+routes.post('/booking',VerifyJwt,  bookingController.registerBooking)
 
 // flights routes
 routes.get('/displaydata', flightController.displayData)
