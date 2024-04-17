@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import userModel from "../models/userModel.js";
 import { ApiError } from "../utils/ApiErrors.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { Domain } from "domain";
+
 
 const generateFreshAccessToken = async function (userId) {
   const user = await userModel.findById(userId);
@@ -36,7 +36,8 @@ const userController = {
         path: "/",
         secure: true,
         sameSite: "none",
-        Domain: "flightapp-wine.vercel.app"
+        Domain: "flightapp-wine.vercel.app",
+        maxAge:  new Date( Date.now()+ 60 * 60 * 24 * 1000)// 24 hours
       };
       const accessToken = await user.generateAccessToken();
       res
@@ -70,7 +71,8 @@ const userController = {
           secure: true,
           sameSite: "None",
           maxAge: 86400 * 1000,
-          Domain: "flightapp-wine.vercel.app"
+          Domain: "flightapp-wine.vercel.app",
+          maxAge:  new Date( Date.now()+ 60 * 60 * 24 * 1000)// 24 hours
         };
 
         const { accessToken } = await generateFreshAccessToken(user._id);
@@ -99,7 +101,8 @@ const userController = {
       secure: true,
       path: "/",
       sameSite: "None",
-      Domain: "flightapp-wine.vercel.app"
+      Domain: "flightapp-wine.vercel.app",
+      maxAge:  new Date( Date.now()+ 60 * 60 * 24 * 1000)// 24 hours
     }
     res.status(200)
       .clearCookie("accessToken", options)
