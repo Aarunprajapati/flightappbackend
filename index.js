@@ -14,6 +14,7 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: 'https://flightapp-wine.vercel.app',
+    domain: 'flightapp-wine.vercel.app',
     credentials: true,
     preflightContinue: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
