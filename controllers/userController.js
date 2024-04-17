@@ -36,7 +36,7 @@ const userController = {
         path: "/",
         secure: true,
         sameSite: "none",
-        Domain: "https://flightapp-wine.vercel.app"
+        Domain: "flightapp-wine.vercel.app"
       };
       const accessToken = await user.generateAccessToken();
       res
@@ -70,7 +70,7 @@ const userController = {
           secure: true,
           sameSite: "None",
           maxAge: 86400 * 1000,
-          Domain: "https://flightapp-wine.vercel.app"
+          Domain: "flightapp-wine.vercel.app"
         };
 
         const { accessToken } = await generateFreshAccessToken(user._id);
@@ -99,7 +99,7 @@ const userController = {
       secure: true,
       path: "/",
       sameSite: "None",
-      Domain: "https://flightapp-wine.vercel.app"
+      Domain: "flightapp-wine.vercel.app"
     }
     res.status(200)
       .clearCookie("accessToken", options)
