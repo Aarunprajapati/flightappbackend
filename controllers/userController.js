@@ -32,7 +32,7 @@ const userController = {
       });
 
       const options = {
-        httpOnly: true,
+        // httpOnly: true,
         path: "/",
         secure: true,
         sameSite: "none",
@@ -66,7 +66,7 @@ const userController = {
         }
 
         const options = {
-          httpOnly: true,
+          // httpOnly: true,
           path: "/",
           secure: true,
           sameSite: "None",
@@ -97,7 +97,7 @@ const userController = {
     const user = await userModel.findByIdAndUpdate(req.user._id);
     if (!user) return null;
     const options = {
-      httpOnly: true,
+      // httpOnly: true,
       secure: true,
       path: "/",
       sameSite: "None",
