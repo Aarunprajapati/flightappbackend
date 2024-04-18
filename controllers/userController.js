@@ -77,8 +77,8 @@ const userController = {
 
         const { accessToken } = await generateFreshAccessToken(user._id);
         res
+        .cookie("accessToken", accessToken, options)
           .status(200)
-          .cookie("accessToken", accessToken, options)
           .json(
             new ApiResponse(200, {
               success: "User login successfully",
