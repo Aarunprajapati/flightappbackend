@@ -13,18 +13,15 @@ connectDB(DATABASEURL);
 app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: ['http://localhost:3000','https://flightapp-wine.vercel.app'],
     credentials: true,
     preflightContinue: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
   }),
 );
 app.use(express.urlencoded({ limit: "16kb" }));
-
 app.use(express.json({ limit: "16kb" }));
-
 app.use("/api/user", userRoutes);
-
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
