@@ -24,7 +24,7 @@ const bookingController = {
         email,
         members,
       } = req.body;
-
+    
       if (!id || !fare || !phone || !email || !members || members.length === 0) {
         return res.status(400).json({
           error: "Please provide all the required details including members information",
@@ -73,7 +73,7 @@ const bookingController = {
         user: user._id,
         members,
       });
-     
+      
       await booking.save();
 
       // Respond with success message and checkout session URL

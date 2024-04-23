@@ -13,7 +13,7 @@ routes.post('/login', userController.login);
 //Secured routes
 routes.post('/booking', VerifyJwt, bookingController.registerBooking)
 routes.post('/sendmail', VerifyJwt, mailController.sendmail)
-routes.post("/logout", VerifyJwt, userController.logOut)
+routes.post("/logout", userController.logOut)
 
 // flights routes
 routes.get('/displaydata', flightController.displayData)

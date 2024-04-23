@@ -94,23 +94,31 @@ const userController = {
     res.send({ user: req.user });
   },
   async logOut(req, res) {
-    const user = await userModel.findByIdAndUpdate(req.user._id);
-    if (!user) return null;
-    const options = {
-      // httpOnly: true,
-      secure: true,
-      path: "/",
-      sameSite: "None",
-      Domain: "flightapp-wine.vercel.app",
-      maxAge:  new Date( Date.now()+ 60 * 60 * 24 * 1000)// 24 hours
-    }
-    res.status(200)
-      .clearCookie("accessToken", options)
-      .json(
-        new ApiResponse(200, {}, "user logged out successfully")
-      )
-  },
-
+    // const user = await userModel.findByIdAndUpdate(req.user._id);
+    // if (!user) return null;
+  //   const options = {
+  //     // httpOnly: true,
+  //     secure: true,
+  //     path: "/",
+  //     sameSite: "None",
+  //     Domain: "flightapp-wine.vercel.app",
+  //     maxAge:  new Date( Date.now()+ 60 * 60 * 24 * 1000)// 24 hours
+  //   }
+  //   res.status(200)
+  //     .clearCookie("accessToken", options)
+  //     .json(
+  //       new ApiResponse(200, {}, "user logged out successfully")
+  //     )
+  // },
+  try {
+    res.cookie("accessToken", "", {
+      maxAge: 0,
+    });
+    res.status(200).json({ success: "logout successfully" });
+  } catch (error) {
+    return res.status(406).json({ error: "internal server error" });
+  }
+  }
 };
 
 export default userController;
