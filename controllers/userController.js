@@ -3,7 +3,6 @@ import userModel from "../models/userModel.js";
 import { ApiError } from "../utils/ApiErrors.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
-
 const generateFreshAccessToken = async function (userId) {
   const user = await userModel.findById(userId);
   const accessToken = await user.generateAccessToken();
@@ -13,8 +12,9 @@ const generateFreshAccessToken = async function (userId) {
 const userController = {
   async register(req, res) {
     try {
-      const { name, email, password } = req.body;
-      if (!(name && email && password)) {
+      const { name, email, password, dob,phoneNumber, gender} = req.body;
+      const profilePic = req.file ? req.file.path : null;
+      if (!(name && email && password && dob && phoneNumber && gender)) {
         return res
           .status(200)
           .json({ error: "Please provide all the required details" });
@@ -28,16 +28,19 @@ const userController = {
       const user = await userModel.create({
         name,
         email,
+        phoneNumber,
+        dob,
         password: hashedPassword,
+        gender,
+        profilePic,
       });
 
       const options = {
-        // httpOnly: true,
+        httpOnly: true,
         path: "/",
         secure: true,
         sameSite: "none",
-        Domain: "flightapp-wine.vercel.app",
-        maxAge:  new Date( Date.now()+ 60 * 60 * 24 * 1000)// 24 hours
+        
       };
       const accessToken = await user.generateAccessToken();
       res
@@ -66,19 +69,17 @@ const userController = {
         }
 
         const options = {
-          // httpOnly: true,
+          httpOnly: true,
           path: "/",
           secure: true,
           sameSite: "None",
           maxAge: 86400 * 1000,
-          Domain: "flightapp-wine.vercel.app",
-          maxAge:  new Date( Date.now()+ 60 * 60 * 24 * 1000)// 24 hours
         };
 
         const { accessToken } = await generateFreshAccessToken(user._id);
         res
-        .cookie("accessToken", accessToken, options)
           .status(200)
+          .cookie("accessToken", accessToken, options)
           .json(
             new ApiResponse(200, {
               success: "User login successfully",
@@ -94,31 +95,16 @@ const userController = {
     res.send({ user: req.user });
   },
   async logOut(req, res) {
-    // const user = await userModel.findByIdAndUpdate(req.user._id);
-    // if (!user) return null;
-  //   const options = {
-  //     // httpOnly: true,
-  //     secure: true,
-  //     path: "/",
-  //     sameSite: "None",
-  //     Domain: "flightapp-wine.vercel.app",
-  //     maxAge:  new Date( Date.now()+ 60 * 60 * 24 * 1000)// 24 hours
-  //   }
-  //   res.status(200)
-  //     .clearCookie("accessToken", options)
-  //     .json(
-  //       new ApiResponse(200, {}, "user logged out successfully")
-  //     )
-  // },
-  try {
-    res.cookie("accessToken", "", {
-      maxAge: 0,
-    });
-    res.status(200).json({ success: "logout successfully" });
-  } catch (error) {
-    return res.status(406).json({ error: "internal server error" });
-  }
-  }
+    try {
+      res.cookie("accessToken", "", {
+        maxAge: 0,
+      });
+      res.status(200).json({ success: "logout successfully" });
+    } catch (error) {
+      return res.status(406).json({ error: "internal server error" });
+    }
+  },
+
 };
 
 export default userController;
