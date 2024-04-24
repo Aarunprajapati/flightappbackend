@@ -2,11 +2,11 @@ import BookingModel from "../models/bookingModel.js";
 import Stripe from "stripe";
 import userModel from "../models/userModel.js";
 import { sendEmail } from "../utils/nodeMailer.js";
+import Flight from "../models/flightModel.js";
 
 const stripe = new Stripe(
   "sk_test_51P11cvSHl2BiGxNdVAvkRuoRTWR4CqZ5WrcHVW6tAdDtf8KEk1AFOR9U1uDXH1I4Phs5MS252llHLPt0FErxxdOV009lnFO2s0"
 );
-
 
 
 const bookingController = {
@@ -24,7 +24,7 @@ const bookingController = {
         email,
         members,
       } = req.body;
-    
+
       if (!id || !fare || !phone || !email || !members || members.length === 0) {
         return res.status(400).json({
           error: "Please provide all the required details including members information",
@@ -73,9 +73,8 @@ const bookingController = {
         user: user._id,
         members,
       });
-      
+     
       await booking.save();
-
       // Respond with success message and checkout session URL
       res.status(200).json({ success: "Booking has been done", url: checkoutSession.url });
     } catch (error) {
@@ -83,6 +82,39 @@ const bookingController = {
       res.status(500).json({ error: "Internal server error" });
     }
   },
+  async displayBooking(req, res){
+    try {
+      const userId = req.user?._id; 
+      const user = await userModel.findById(userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      const bookings = await BookingModel.find({ user: userId });
+      const formattedBookings = bookings.map(booking => ({
+        members: booking.members,
+        fare: booking.fare,
+        email: booking.email,
+        phone: booking.phone,
+      }));
+      
+      
+      const flightIds = bookings.map(booking => booking.id); 
+      
+      const flightDetails = await Flight.find({ _id: { $in: flightIds } });
+      const formattedFlightDetails = flightDetails.map(detail => ({
+        airlines: detail.displayData.airlines,
+        source: detail.displayData.source,
+        destination: detail.displayData.destination,
+      }));
+      
+      await res.json({ bookings: formattedBookings, flightDetails: formattedFlightDetails });
+    } catch (error) {
+      console.error("Error fetching and formatting data:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+    
+  }
 };
 
 export default bookingController;

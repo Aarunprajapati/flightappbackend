@@ -4,11 +4,8 @@ import jwt from "jsonwebtoken";
 import { getKeyFromCookie } from "../utils/helpers.js";
 
 export const VerifyJwt = async (req, res, next) => {
-  // console.log(req.route, req.pathname, req.originalUrl,req.headers.cookie,' cookies')
-  // console.log(req.cookies,req.signedCookies,' cookies2 ')
-  // console.log(req.header('cookie'),req.header("authorization"),req.header("Authorization"),' headers ')
+
   try {
-    // req.cookies?.accessToken
     const token = req.cookies?.accessToken ||
       req.header("Authorization")?.replace("Bearer ", "");
     if (!token && token === "undefined") {

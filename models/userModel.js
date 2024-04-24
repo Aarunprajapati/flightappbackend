@@ -2,23 +2,40 @@ import mongoose from "mongoose";
 import jwt from "jsonwebtoken"
 
 
-const userSchema = new mongoose.Schema({
-    name:{
-        type:String,
-        required:true
+const userSchema = new mongoose.Schema(
+    {
+      name: {
+        type: String,
+        required: true,
+      },
+      email: {
+        type: String,
+        required: true,
+      },
+      password: {
+        type: String,
+        required: true,
+      },
+      dob: {
+        type: String,
+        required: true,
+      },
+      phoneNumber: {
+        type: String,
+        required: true,
+      },
+      gender: {
+        type: String,
+        required: true,
+        enum: ["male", "female"],
+      },
+      profilePic: {
+        type: String,
+        default: "",
+      },
     },
-    email:{
-        type:String,
-        required:true,
-        unique:true
-    },
-    password:{
-        type:String,
-        required:true
-    }
-},{
-    timestamps:true
-})
+    { timestamps: true },
+  );
 
 userSchema.methods.generateAccessToken = async function(){
     return await jwt.sign(
