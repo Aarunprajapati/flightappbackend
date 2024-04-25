@@ -12,7 +12,7 @@ const generateFreshAccessToken = async function (userId) {
 const userController = {
   async register(req, res) {
     try {
-      const { name, email, password, dob,phoneNumber, gender} = req.body;
+      const { name, email, password, dob, phoneNumber, gender} = req.body;
       const profilePic = req.file ? req.file.path : null;
       if (!(name && email && password && dob && phoneNumber && gender)) {
         return res
