@@ -98,15 +98,20 @@ const bookingController = {
         phone: booking.phone,
       }));
       
+      const flightIds = bookings.map(booking => booking.id);
+
+      const formattedFlightDetails = [];
       
-      const flightIds = bookings.map(booking => booking.id); 
-      
-      const flightDetails = await Flight.find({ _id: { $in: flightIds } });
-      const formattedFlightDetails = flightDetails.map(detail => ({
-        airlines: detail.displayData.airlines,
-        source: detail.displayData.source,
-        destination: detail.displayData.destination,
-      }));
+      for (const flightId of flightIds) {
+        const flightDetail = await Flight.findOne({ _id: flightId });
+        if (flightDetail) {
+          formattedFlightDetails.push({
+            airlines: flightDetail.displayData.airlines,
+            source: flightDetail.displayData.source,
+            destination: flightDetail.displayData.destination,
+          });
+        }
+      }
       
       await res.json({ bookings: formattedBookings, flightDetails: formattedFlightDetails });
     } catch (error) {
