@@ -14,6 +14,7 @@ routes.post('/register', upload.single("profilePic"), userController.register)
 routes.post('/login', userController.login);
 routes.post('/googleUser', googleUserController.googleUser);
 routes.get("/googleUserData",VerifyJwt, googleUserController.googleUserData)
+routes.post("/updateUser", VerifyJwt, userController.updateUser)
 //Secured routes
 routes.get("/profile", VerifyJwt, userController.loggeduser)
 routes.post('/booking', VerifyJwt, bookingController.registerBooking)
