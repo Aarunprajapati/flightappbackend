@@ -13,9 +13,9 @@ const routes = express.Router();
 routes.post('/register', upload.single("profilePic"), userController.register)
 routes.post('/login', userController.login);
 routes.post('/googleUser', googleUserController.googleUser);
-routes.get("/googleUserData",VerifyJwt, googleUserController.googleUserData)
 //Secured routes
-routes.get("/profile", VerifyJwt, userController.loggeduser)
+routes.get("/googleUserData",VerifyJwt, googleUserController.googleUserData)
+routes.get("/profile", VerifyJwt, userController.profile)
 routes.post('/booking', VerifyJwt, bookingController.registerBooking)
 routes.get('/userDeatils', VerifyJwt, bookingController.displayBooking)
 routes.post('/sendmail', VerifyJwt, mailController.sendmail)

@@ -23,9 +23,9 @@ const googleSchema = new mongoose.Schema(
         {
             _id: this._id
         },
-        process.env.ACCESS_TOKEN_SECRET,
+        process.env.ACCESS_GOOGLETOKEN_SECRET,
         {
-            expiresIn: process.env.ACCESS_TOKEN_EXPIRY
+            expiresIn: process.env.ACCESS_GOOGLETOKEN_EXPIRY
         }
     )
 }
