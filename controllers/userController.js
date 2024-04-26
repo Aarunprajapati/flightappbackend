@@ -72,7 +72,6 @@ const userController = {
         if (!isMatch) {
           res.status(404).json({ message: "Invalid Password" });
         }
-
         const options = {
           httpOnly: true,
           path: "/",
@@ -96,12 +95,15 @@ const userController = {
       throw new ApiError(500, "Internal Server Error");
     }
   },
-  async loggeduser(req, res) {
-    res.send({ user: req.user });
+  async profile(req, res) {
+     return res.status(200).json({ user: req.user });
   },
   async logOut(req, res) {
     try {
       res.cookie("accessToken", "", {
+        maxAge: 0,
+      });
+      res.cookie("googleToken", "", {
         maxAge: 0,
       });
       res.status(200).json({ success: "logout successfully" });
