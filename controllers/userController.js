@@ -111,7 +111,25 @@ const userController = {
       return res.status(406).json({ error: "internal server error" });
     }
   },
+  async updateUser(req, res){
+    try {
+      const { name, dob, phoneNumber, gender } = req.body;
+      const userId = req.user?._id; 
+      const updateFields = { name, dob, phoneNumber, gender };
+      const filteredFields = Object.fromEntries(Object.entries(updateFields).filter(([key, value]) => value !== undefined)); 
+      const user = await userModel.findByIdAndUpdate(userId, filteredFields, { new: true });
 
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      await  res
+        .status(200)
+        .json(new ApiResponse(200, { success: "user update Successfully" }));
+    } catch (error) {
+      console.error("error in the update", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
 };
 
 export default userController;
