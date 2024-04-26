@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import userModel from "../models/userModel.js";
 import { ApiError } from "../utils/ApiErrors.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const generateFreshAccessToken = async function (userId) {
   const user = await userModel.findById(userId);
@@ -12,8 +13,10 @@ const generateFreshAccessToken = async function (userId) {
 const userController = {
   async register(req, res) {
     try {
-      const { name, email, password, dob, phoneNumber, gender} = req.body;
-      const profilePic = req.file ? req.file.path : null;
+      const { name, email, password, dob, phoneNumber, gender } = req.body;
+      const profilePic = req.file?.path
+
+
       if (!(name && email && password && dob && phoneNumber && gender)) {
         return res
           .status(200)
@@ -23,7 +26,9 @@ const userController = {
       if (emailExist) {
         return res.status(400).json({ error: "Email already exists" });
       }
+
       const hashedPassword = await bcrypt.hash(password, 10);
+      const avatarimage = await uploadOnCloudinary(profilePic)
 
       const user = await userModel.create({
         name,
@@ -32,7 +37,7 @@ const userController = {
         dob,
         password: hashedPassword,
         gender,
-        profilePic,
+        profilePic: avatarimage?.url,
       });
 
       const options = {
@@ -40,7 +45,7 @@ const userController = {
         path: "/",
         secure: true,
         sameSite: "none",
-        
+
       };
       const accessToken = await user.generateAccessToken();
       res
