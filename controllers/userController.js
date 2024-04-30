@@ -95,7 +95,7 @@ const userController = {
           );
       }
     } catch (error) {
-      throw new ApiError(500, "Internal Server Error");
+      return res.status(400).json({ error: error.message });
     }
   },
   async profile(req, res) {
