@@ -95,6 +95,7 @@ const userController = {
           );
       }
     } catch (error) {
+      console.log(error, "error in login")
       throw new ApiError(500, "Internal Server Error");
     }
   },
