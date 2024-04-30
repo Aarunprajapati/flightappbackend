@@ -7,7 +7,7 @@ export const VerifyJwt = async (req, res, next) => {
   try {
     const accessToken = req.cookies?.accessToken || req.headers.authorization?.replace("Bearer ", "");
     const googleToken = req.cookies?.googleToken;
-
+    
     if (!accessToken && !googleToken) {
       return res.status(400).json({ message: "No tokens provided" });
     }
@@ -44,8 +44,8 @@ export const VerifyJwt = async (req, res, next) => {
       return res.status(400).json({ message: "Authentication failed: " + errors.join(", ") });
     }
 
-    req.user = user;
-    req.googleuser = googleUserInstance;
+    req.user = user || googleUserInstance;
+   
     next();
   } catch (error) {
     return res.status(500).json({ message: error.message });
