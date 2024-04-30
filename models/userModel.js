@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema(
     },
     dob: {
       type: String,
-     
+      
     },
     phoneNumber: {
       type: String,
@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-     
+    
     },
     profilePic: {
       type: String,
