@@ -1,8 +1,8 @@
 import BookingModel from "../models/bookingModel.js";
 import Stripe from "stripe";
 import userModel from "../models/userModel.js";
-import { sendEmail } from "../utils/nodeMailer.js";
 import Flight from "../models/flightModel.js";
+import googleUser from "../models/googleUserModel.js";
 
 const stripe = new Stripe(
   "sk_test_51P11cvSHl2BiGxNdVAvkRuoRTWR4CqZ5WrcHVW6tAdDtf8KEk1AFOR9U1uDXH1I4Phs5MS252llHLPt0FErxxdOV009lnFO2s0"
@@ -30,13 +30,15 @@ const bookingController = {
           error: "Please provide all the required details including members information",
         });
       }
-
+     
       const totalFare = fare * members.length || fare;
-
-
-      const user = await userModel.findById(req.user?._id);
+      const user = await userModel.findById(req.user?._id) || await googleUser.findById(req.user?._id);
+      console.log(user,"user")
       if (!user) {
         return res.status(404).json({ error: "User not found" });
+      }
+      if(!user.isActive){
+        return res.status(404).json({ error: "User Account is not active" });
       }
       const customer = await stripe.customers.create({
         email: user.email,
@@ -89,7 +91,9 @@ const bookingController = {
       if (!user) {
         return res.status(404).json({ error: "User not found" });
       }
-      
+      if(!user.isActive){
+        return res.status(404).json({ error: "User Account is not active" });
+      }
       const bookings = await BookingModel.find({ user: userId });
       const formattedBookings = bookings.map(booking => ({
         members: booking.members,

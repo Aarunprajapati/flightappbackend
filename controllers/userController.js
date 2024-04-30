@@ -38,6 +38,7 @@ const userController = {
         password: hashedPassword,
         gender,
         profilePic: avatarimage?.url,
+        isActive: true
       });
 
       const options = {
@@ -72,6 +73,8 @@ const userController = {
         if (!isMatch) {
           res.status(404).json({ message: "Invalid Password" });
         }
+        user.isActive = true;
+        await user.save();
         const options = {
           httpOnly: true,
           path: "/",
@@ -96,7 +99,14 @@ const userController = {
     }
   },
   async profile(req, res) {
-     return res.status(200).json({ user: req.user });
+    const user = await userModel.findById(req.user?._id);
+    if(!user){
+      return res.status(404).json({error: "User not found"})
+    }
+    if (!user.isActive) {
+      return res.status(404).json({ error: "User Account is not active" });
+    }
+    return res.status(200).json({ user: req.user });
   },
   async logOut(req, res) {
     try {
