@@ -4,6 +4,7 @@ import { ApiError } from "../utils/ApiErrors.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
+
 const generateFreshAccessToken = async function (userId) {
   const user = await userModel.findById(userId);
   const accessToken = await user.generateAccessToken();
@@ -47,14 +48,14 @@ const userController = {
         secure: true,
         sameSite: "none",
         maxAge: 86400 * 1000,
-        Domain: `${process.env.FRONTEND_URL}`
+        domain: process.env.FRONTEND_URL.replace(/^https?:\/\//i, "")
 
       };
       const accessToken = await user.generateAccessToken();
       res
         .status(200)
-        .cookie("accessToken", accessToken, options)
-        .json(new ApiResponse(200, { success: "Register Successfully" }));
+        .Set - Cookie("accessToken", accessToken, options)
+          .json(new ApiResponse(200, { success: "Register Successfully" }));
     } catch (error) {
       new ApiError(500, error.message || "Internal Server Error");
     }
@@ -83,7 +84,7 @@ const userController = {
           secure: true,
           sameSite: "None",
           maxAge: 86400 * 1000,
-          Domain: `${process.env.FRONTEND_URL}`
+          domain: process.env.FRONTEND_URL.replace(/^https?:\/\//i, "")
         };
 
         const { accessToken } = await generateFreshAccessToken(user._id);
