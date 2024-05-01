@@ -18,9 +18,8 @@ connectDB(DATABASEURL);
 app.use(cookieParser());
 app.use(
   cors({
-    origin: 'https://flightapp-wine.vercel.app',
     credentials: true,
-    preflightContinue: true,
+    origin: `${process.env.FRONTEND_URL}`,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
   }),
 );
