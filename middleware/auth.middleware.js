@@ -1,35 +1,53 @@
 import userModel from "../models/userModel.js";
+import googleUser from "../models/googleUserModel.js";
 import { ApiError } from "../utils/ApiErrors.js";
 import jwt from "jsonwebtoken";
-import { getKeyFromCookie } from "../utils/helpers.js";
 
 export const VerifyJwt = async (req, res, next) => {
-  // console.log(req.route, req.pathname, req.originalUrl,req.headers.cookie,' cookies')
-  // console.log(req.cookies,req.signedCookies,' cookies2 ')
-  // console.log(req.header('cookie'),req.header("authorization"),req.header("Authorization"),' headers ')
   try {
-    // req.cookies?.accessToken
-    const token = req.cookies?.accessToken ||
-      req.header("Authorization")?.replace("Bearer ", "");
-    if (!token && token === "undefined") {
-      throw new ApiError(404, "Invalid token");
-    }
-    const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
-    if (!decodedToken) {
-      throw new ApiError(404, "Token Verify Failed")
-    }
-    const user = await userModel.findById(decodedToken._id).select("-password")
-    console.log(user, "middleware")
-    if (!user) {
-      throw new ApiError(404, "User Not Found")
+    const accessToken = req.cookies?.accessToken || req.headers.authorization?.replace("Bearer ", "");
+    const googleToken = req.cookies?.googleToken;
+    
+    if (!accessToken && !googleToken) {
+      return res.status(400).json({ message: "No tokens provided" });
     }
 
-    req.user = user
-    next()
-  } catch (error) {
-    return {
-      error: "unauthorization user"
+    let user = null;
+    let googleUserInstance = null;
+    let errors = [];
+
+    if (accessToken && accessToken !== "undefined") {
+      try {
+        const decodedAccessToken = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+        user = await userModel.findById(decodedAccessToken._id).select("-password");
+        if (!user) {
+          errors.push("User not found from accessToken");
+        }
+      } catch (error) {
+        errors.push(error.message);
+      }
     }
+
+    if (googleToken && googleToken !== "undefined") {
+      try {
+        const decodedGoogleToken = jwt.verify(googleToken, process.env.ACCESS_GOOGLETOKEN_SECRET);
+        googleUserInstance = await googleUser.findById(decodedGoogleToken._id);
+        if (!googleUserInstance) {
+          errors.push("Google user not found from googleToken");
+        }
+      } catch (error) {
+        errors.push(error.message);
+      }
+    }
+
+    if (!user && !googleUserInstance) {
+      return res.status(400).json({ message: "Authentication failed: " + errors.join(", ") });
+    }
+
+    req.user = user || googleUserInstance;
+   
+    next();
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
   }
 };
-

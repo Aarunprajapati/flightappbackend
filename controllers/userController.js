@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import userModel from "../models/userModel.js";
 import { ApiError } from "../utils/ApiErrors.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const generateFreshAccessToken = async function (userId) {
   const user = await userModel.findById(userId);
@@ -13,8 +13,11 @@ const generateFreshAccessToken = async function (userId) {
 const userController = {
   async register(req, res) {
     try {
-      const { name, email, password } = req.body;
-      if (!(name && email && password)) {
+      const { name, email, password, dob, phoneNumber, gender } = req.body;
+      const profilePic = req.file?.path
+
+
+      if (!(name && email && password && dob && phoneNumber && gender)) {
         return res
           .status(200)
           .json({ error: "Please provide all the required details" });
@@ -23,21 +26,27 @@ const userController = {
       if (emailExist) {
         return res.status(400).json({ error: "Email already exists" });
       }
+
       const hashedPassword = await bcrypt.hash(password, 10);
+      const avatarimage = await uploadOnCloudinary(profilePic)
 
       const user = await userModel.create({
         name,
         email,
+        phoneNumber,
+        dob,
         password: hashedPassword,
+        gender,
+        profilePic: avatarimage?.url,
+        isActive: true
       });
 
       const options = {
-        // httpOnly: true,
+        httpOnly: true,
         path: "/",
         secure: true,
         sameSite: "none",
-        Domain: "flightapp-wine.vercel.app",
-        maxAge:  new Date( Date.now()+ 60 * 60 * 24 * 1000)// 24 hours
+
       };
       const accessToken = await user.generateAccessToken();
       res
@@ -64,21 +73,20 @@ const userController = {
         if (!isMatch) {
           res.status(404).json({ message: "Invalid Password" });
         }
-
+        user.isActive = true;
+        await user.save();
         const options = {
-          // httpOnly: true,
+          httpOnly: true,
           path: "/",
           secure: true,
           sameSite: "None",
           maxAge: 86400 * 1000,
-          Domain: "flightapp-wine.vercel.app",
-          maxAge:  new Date( Date.now()+ 60 * 60 * 24 * 1000)// 24 hours
         };
 
         const { accessToken } = await generateFreshAccessToken(user._id);
         res
-        .cookie("accessToken", accessToken, options)
           .status(200)
+          .cookie("accessToken", accessToken, options)
           .json(
             new ApiResponse(200, {
               success: "User login successfully",
@@ -87,30 +95,51 @@ const userController = {
           );
       }
     } catch (error) {
-      throw new ApiError(500, "Internal Server Error");
+      return res.status(400).json({ error: error.message });
     }
   },
-  async loggeduser(req, res) {
-    res.send({ user: req.user });
+  async profile(req, res) {
+    const user = await userModel.findById(req.user?._id);
+    if(!user){
+      return res.status(404).json({error: "User not found"})
+    }
+    if (!user.isActive) {
+      return res.status(404).json({ error: "User Account is not active" });
+    }
+    return res.status(200).json({ user: req.user });
   },
   async logOut(req, res) {
-    const user = await userModel.findByIdAndUpdate(req.user._id);
-    if (!user) return null;
-    const options = {
-      // httpOnly: true,
-      secure: true,
-      path: "/",
-      sameSite: "None",
-      Domain: "flightapp-wine.vercel.app",
-      maxAge:  new Date( Date.now()+ 60 * 60 * 24 * 1000)// 24 hours
+    try {
+      res.cookie("accessToken", "", {
+        maxAge: 0,
+      });
+      res.cookie("googleToken", "", {
+        maxAge: 0,
+      });
+      res.status(200).json({ success: "logout successfully" });
+    } catch (error) {
+      return res.status(406).json({ error: "internal server error" });
     }
-    res.status(200)
-      .clearCookie("accessToken", options)
-      .json(
-        new ApiResponse(200, {}, "user logged out successfully")
-      )
   },
+  async updateUser(req, res){
+    try {
+      const { name, dob, phoneNumber, gender } = req.body;
+      const userId = req.user?._id; 
+      const updateFields = { name, dob, phoneNumber, gender };
+      const filteredFields = Object.fromEntries(Object.entries(updateFields).filter(([key, value]) => value !== undefined)); 
+      const user = await userModel.findByIdAndUpdate(userId, filteredFields, { new: true });
 
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      await  res
+        .status(200)
+        .json(new ApiResponse(200, { success: "user update Successfully" }));
+    } catch (error) {
+      console.error("error in the update", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
 };
 
 export default userController;
