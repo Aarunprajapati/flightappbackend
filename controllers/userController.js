@@ -46,16 +46,16 @@ const userController = {
         httpOnly: true,
         path: "/",
         secure: true,
-        sameSite: "none",
+        sameSite: "None",
         maxAge: 86400 * 1000,
-        domain: process.env.FRONTEND_URL.replace(/^https?:\/\//i, "")
+        domain: `${process.env.FRONTEND_URL}`
 
       };
       const accessToken = await user.generateAccessToken();
       res
         .status(200)
-        .Set - Cookie("accessToken", accessToken, options)
-          .json(new ApiResponse(200, { success: "Register Successfully" }));
+        .cookie("accessToken", accessToken, options)
+        .json(new ApiResponse(200, { success: "Register Successfully" }));
     } catch (error) {
       new ApiError(500, error.message || "Internal Server Error");
     }
@@ -84,7 +84,7 @@ const userController = {
           secure: true,
           sameSite: "None",
           maxAge: 86400 * 1000,
-          domain: process.env.FRONTEND_URL.replace(/^https?:\/\//i, "")
+         domain: `${process.env.FRONTEND_URL}`
         };
 
         const { accessToken } = await generateFreshAccessToken(user._id);
