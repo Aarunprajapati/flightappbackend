@@ -21,6 +21,7 @@ app.use(
     credentials: true,
     origin: `${process.env.FRONTEND_URL}`,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
+   
   }),
 );
 app.use(express.urlencoded({ limit: "16kb" }));

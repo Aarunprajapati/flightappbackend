@@ -47,7 +47,7 @@ const userController = {
         secure: true,
         sameSite: "none",
         maxAge: 86400 * 1000,
-        Domain:`${process.env.FRONTEND_URL}`
+        Domain: `${process.env.FRONTEND_URL}`
 
       };
       const accessToken = await user.generateAccessToken();
@@ -83,7 +83,7 @@ const userController = {
           secure: true,
           sameSite: "None",
           maxAge: 86400 * 1000,
-          Domain:`${process.env.FRONTEND_URL}`
+          Domain: `${process.env.FRONTEND_URL}`
         };
 
         const { accessToken } = await generateFreshAccessToken(user._id);
@@ -103,8 +103,8 @@ const userController = {
   },
   async profile(req, res) {
     const user = await userModel.findById(req.user?._id);
-    if(!user){
-      return res.status(404).json({error: "User not found"})
+    if (!user) {
+      return res.status(404).json({ error: "User not found" })
     }
     if (!user.isActive) {
       return res.status(404).json({ error: "User Account is not active" });
@@ -124,18 +124,18 @@ const userController = {
       return res.status(406).json({ error: "internal server error" });
     }
   },
-  async updateUser(req, res){
+  async updateUser(req, res) {
     try {
       const { name, dob, phoneNumber, gender } = req.body;
-      const userId = req.user?._id; 
+      const userId = req.user?._id;
       const updateFields = { name, dob, phoneNumber, gender };
-      const filteredFields = Object.fromEntries(Object.entries(updateFields).filter(([key, value]) => value !== undefined)); 
+      const filteredFields = Object.fromEntries(Object.entries(updateFields).filter(([key, value]) => value !== undefined));
       const user = await userModel.findByIdAndUpdate(userId, filteredFields, { new: true });
 
       if (!user) {
         return res.status(404).json({ error: "User not found" });
       }
-      await  res
+      await res
         .status(200)
         .json(new ApiResponse(200, { success: "user update Successfully" }));
     } catch (error) {
