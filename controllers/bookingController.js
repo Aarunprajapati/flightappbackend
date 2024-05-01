@@ -5,7 +5,7 @@ import Flight from "../models/flightModel.js";
 import googleUser from "../models/googleUserModel.js";
 
 const stripe = new Stripe(
-  "sk_test_51P11cvSHl2BiGxNdVAvkRuoRTWR4CqZ5WrcHVW6tAdDtf8KEk1AFOR9U1uDXH1I4Phs5MS252llHLPt0FErxxdOV009lnFO2s0"
+`${process.env.STRIPE_SECRET_KEY}`
 );
 
 
