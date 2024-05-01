@@ -169,7 +169,7 @@ const flightController = {
         query["displayData.stopInfo"] = { $regex: stopInfo, $options: "i" };
       }
       if (price) {
-        query.fare = { $lte: price };
+        query.fare = { $gte: price };
       }
     
       let flights = await Flight.find(query);
