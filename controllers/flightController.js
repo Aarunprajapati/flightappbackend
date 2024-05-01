@@ -79,38 +79,56 @@ const flightController = {
     }
   },
   async matchingData(req, res) {
+   
     // try {
     //   const { location, locationR, stopInfo, depTime, price, select } = req.query;
-
+    //   let query = {};
+    
     //   if (!(location && locationR)) {
     //     return res
     //       .status(400)
     //       .json({ error: "Please provide all the required details" });
     //   }
-        
-    //   let query = {
-    //     "displayData.source.airport.cityName": {
-    //       $regex: location,
-    //       $options: "i",
-    //     },
-    //     "displayData.destination.airport.cityName": {
-    //       $regex: locationR,
-    //       $options: "i",
-    //     },
-    //   };
-
+    
+    //   if (select === "Round trip") {
+    //     query = {
+    //       $or: [
+    //         {
+    //           $and: [
+    //             { "displayData.source.airport.cityName": { $regex: location, $options: "i" } },
+    //             { "displayData.destination.airport.cityName": { $regex: locationR, $options: "i" } },
+    //           ],
+    //         },
+    //         {
+    //           $and: [
+    //             { "displayData.source.airport.cityName": { $regex: locationR, $options: "i" } },
+    //             { "displayData.destination.airport.cityName": { $regex: location, $options: "i" } },
+    //           ],
+    //         },
+    //       ],
+    //     };
+    //   } else if (select === "One way") {
+    //     query = {
+    //       "displayData.source.airport.cityName": { $regex: location, $options: "i" },
+    //       "displayData.destination.airport.cityName": { $regex: locationR, $options: "i" },
+    //     };
+    //   } else {
+    //     return res.status(400).json({ error: "Invalid select value" });
+    //   }
+    
     //   if (stopInfo) {
     //     query["displayData.stopInfo"] = { $regex: stopInfo, $options: "i" };
     //   }
     //   if (price) {
     //     query.fare = { $lte: price };
     //   }
-
+    
     //   let flights = await Flight.find(query);
     //   if (flights.length === 0 && price) {
-    //     delete query["fare"];
+    //     delete query.fare;
     //     flights = await Flight.find(query);
     //   }
+    
     //   let filteredFlights = flights;
     //   if (depTime) {
     //     const isMorning = depTime.toLowerCase() === "morning";
@@ -119,6 +137,7 @@ const flightController = {
     //       return isMorning ? hour < 12 : hour >= 12;
     //     });
     //   }
+    
     //   if (filteredFlights.length > 0) {
     //     return res.status(200).json(filteredFlights);
     //   } else {
@@ -130,39 +149,21 @@ const flightController = {
     // }
     try {
       const { location, locationR, stopInfo, depTime, price, select } = req.query;
-      let query = {};
     
       if (!(location && locationR)) {
-        return res
-          .status(400)
-          .json({ error: "Please provide all the required details" });
+        return res.status(400).json({ error: "Please provide all the required details" });
       }
     
-      if (select === "Round trip") {
-        query = {
-          $or: [
-            {
-              $and: [
-                { "displayData.source.airport.cityName": { $regex: location, $options: "i" } },
-                { "displayData.destination.airport.cityName": { $regex: locationR, $options: "i" } },
-              ],
-            },
-            {
-              $and: [
-                { "displayData.source.airport.cityName": { $regex: locationR, $options: "i" } },
-                { "displayData.destination.airport.cityName": { $regex: location, $options: "i" } },
-              ],
-            },
-          ],
-        };
-      } else if (select === "One way") {
-        query = {
-          "displayData.source.airport.cityName": { $regex: location, $options: "i" },
-          "displayData.destination.airport.cityName": { $regex: locationR, $options: "i" },
-        };
-      } else {
-        return res.status(400).json({ error: "Invalid select value" });
-      }
+      let query = {
+        "displayData.source.airport.cityName": {
+          $regex: location,
+          $options: "i",
+        },
+        "displayData.destination.airport.cityName": {
+          $regex: locationR,
+          $options: "i",
+        },
+      };
     
       if (stopInfo) {
         query["displayData.stopInfo"] = { $regex: stopInfo, $options: "i" };
@@ -173,7 +174,7 @@ const flightController = {
     
       let flights = await Flight.find(query);
       if (flights.length === 0 && price) {
-        delete query.fare;
+        delete query["fare"];
         flights = await Flight.find(query);
       }
     
@@ -186,15 +187,59 @@ const flightController = {
         });
       }
     
-      if (filteredFlights.length > 0) {
-        return res.status(200).json(filteredFlights);
+      if (select === "One way") {
+        if (filteredFlights.length > 0) {
+          return res.status(200).json( filteredFlights);
+        } else {
+          return res.status(404).json({ error: "No matching one-way flights found" });
+        }
+      } else if (select === "Round trip") {
+        // Swap location and locationR for rounded trip
+        const roundedTripQuery = {
+          "displayData.source.airport.cityName": {
+            $regex: locationR,
+            $options: "i",
+          },
+          "displayData.destination.airport.cityName": {
+            $regex: location,
+            $options: "i",
+          },
+        };
+    
+        let roundTripFlights = await Flight.find(roundedTripQuery);
+        if (roundTripFlights.length === 0 && price) {
+          delete roundedTripQuery["fare"];
+          roundTripFlights = await Flight.find(roundedTripQuery);
+        }
+    
+        let filteredRoundTripFlights = roundTripFlights;
+        if (depTime) {
+          const isMorning = depTime.toLowerCase() === "morning";
+          filteredRoundTripFlights = roundTripFlights.filter((flight) => {
+            const hour = new Date(flight.displayData.source.depTime).getHours();
+            return isMorning ? hour < 12 : hour >= 12;
+          });
+        }
+    
+        const response = [
+          { oneWayFlights : filteredFlights },
+          { roundTripFlights: filteredRoundTripFlights },
+        ];
+    
+        if (response.length > 0) {
+          return res.status(200).json(response);
+        } else {
+          return res.status(404).json({ error: "No matching flights found" });
+        }
       } else {
-        return res.status(404).json({ error: "No matching flights found" });
+        return res.status(400).json({ error: "Invalid selection value" });
       }
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: "Internal Server Error" });
     }
+    
+    
     
     
   },
