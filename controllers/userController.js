@@ -48,7 +48,7 @@ const userController = {
         secure: true,
         sameSite: "None",
         maxAge: 86400 * 1000,
-        domain: `${process.env.FRONTEND_URL}`
+        domain: process.env.FRONTEND_URL
 
       };
       const accessToken = await user.generateAccessToken();
@@ -84,13 +84,14 @@ const userController = {
           secure: true,
           sameSite: "None",
           maxAge: 86400 * 1000,
-          domain: `${process.env.FRONTEND_URL}`
+         domain: process.env.FRONTEND_URL
         };
 
         const { accessToken } = await generateFreshAccessToken(user._id);
         res
           .status(200)
           .cookie("accessToken", accessToken, options)
+          
           .json(
             new ApiResponse(200, {
               success: "User login successfully",

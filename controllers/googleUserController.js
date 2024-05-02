@@ -37,7 +37,6 @@ const googleUserController = {
     async googleUserData(req, res) {
         try {
             const user = await GoogleUser.findById(req.user?._id);
-            console.log(user,"user")
             if (!user || !user.isActive) {
                 return res.status(404).json({ error: "User account is not active or does not exist." });
             }
