@@ -51,18 +51,10 @@ const userController = {
         domain: `${process.env.FRONTEND_URL}`
 
       };
-      // const accessToken = await user.generateAccessToken();
-      // res
-      //   .status(200)
-      //   .cookie("accessToken", accessToken, options)
-      //   .json(new ApiResponse(200, { success: "Register Successfully" }));
       const accessToken = await user.generateAccessToken();
-      const serialisedAT = `accessToken=${accessToken}; ${Object.keys(options)
-        .map((key) => `${key}=${options[key]}`)
-        .join("; ")}`;
       res
         .status(200)
-        .setHeader('set-cookie', [serialisedAT])
+        .cookie("accessToken", accessToken, options)
         .json(new ApiResponse(200, { success: "Register Successfully" }));
     } catch (error) {
       new ApiError(500, error.message || "Internal Server Error");
@@ -95,24 +87,16 @@ const userController = {
           domain: `${process.env.FRONTEND_URL}`
         };
 
-        // const { accessToken } = await generateFreshAccessToken(user._id);
-        // res
-        //   .status(200)
-        //   .cookie("accessToken", accessToken, options)
-        //   .json(
-        //     new ApiResponse(200, {
-        //       success: "User login successfully",
-        //       accessToken,
-        //     }),
-        //   );
         const { accessToken } = await generateFreshAccessToken(user._id);
-        const serialisedAT = `accessToken=${accessToken}; ${Object.keys(options)
-          .map((key) => `${key}=${options[key]}`)
-          .join("; ")}`;
         res
           .status(200)
-          .setHeader('set-cookie', [serialisedAT])
-          .json(new ApiResponse(200, { success: "Register Successfully" }));
+          .cookie("accessToken", accessToken, options)
+          .json(
+            new ApiResponse(200, {
+              success: "User login successfully",
+              accessToken,
+            }),
+          );
       }
     } catch (error) {
       return res.status(400).json({ error: error.message });
