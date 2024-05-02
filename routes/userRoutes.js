@@ -34,8 +34,6 @@ routes.get("/matchingData", flightController.matchingData)
 routes.get("/searchData", flightController.searchData)
 
 
-routes.get("/",(req, res)=>{
-    res.send("Welcome to Flight Booking API'S") 
-})
+
 
 export default routes;      
