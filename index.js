@@ -27,6 +27,9 @@ app.use(
 app.use(express.urlencoded({ limit: "16kb" }));
 app.use(express.json({ limit: "16kb" }));
 app.use("/api/user", userRoutes);
+
+
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
