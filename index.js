@@ -28,7 +28,7 @@ app.use(express.urlencoded({ limit: "16kb" }));
 app.use(express.json({ limit: "16kb" }));
 app.use("/api/user", userRoutes);
 
-app.router.get("/", (req, res) => {
+app.get("/", (req, res) => {
   res.send("Welcome to the FlightApp backend!");
 });
 
