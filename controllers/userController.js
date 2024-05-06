@@ -115,12 +115,14 @@ const userController = {
   },
   async logOut(req, res) {
     try {
-      res.cookie("accessToken", "", {
-        maxAge: 0,
-      });
-      res.cookie("googleToken", "", {
-        maxAge: 0,
-      });
+      const options = {
+        httpOnly: true,
+        secure: true,
+        maxAge: 0
+      };
+    
+      res.clearCookie("accessToken", options);
+      res.clearCookie("googleToken", options);
       res.status(200).json({ success: "logout successfully" });
     } catch (error) {
       return res.status(406).json({ error: "internal server error" });
