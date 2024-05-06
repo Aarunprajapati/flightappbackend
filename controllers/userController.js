@@ -123,7 +123,7 @@ const userController = {
       };
     
    
-      res.status(200)
+      return res.status(200)
       .clearCookie("accessToken", options)
       .clearCookie("googleToken", options)
       .json({ success: "logout successfully" });
