@@ -117,13 +117,16 @@ const userController = {
     try {
       const options = {
         httpOnly: true,
+        path: "/",
         secure: true,
         maxAge: 0
       };
     
-      res.clearCookie("accessToken", options);
-      res.clearCookie("googleToken", options);
-      res.status(200).json({ success: "logout successfully" });
+   
+      res.status(200)
+      .clearCookie("accessToken", options)
+      .clearCookie("googleToken", options)
+      .json({ success: "logout successfully" });
     } catch (error) {
       return res.status(406).json({ error: "internal server error" });
     }
