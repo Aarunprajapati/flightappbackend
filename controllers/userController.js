@@ -118,6 +118,7 @@ const userController = {
       const options = {
         httpOnly: true,
         path: "/",
+        sameSite: "None",
         secure: true,
         maxAge: 0
       };
